@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "205450097394",
+    "project_id": "wings-exchange-elsan",
+    "storage_bucket": "wings-exchange-elsan.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:205450097394:android:6a516e98ede6187ee7166b",
+        "android_client_info": {
+          "package_name": "com.example.wings"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "205450097394-0cvtfh6tv43hrbte3f8me1veeif852fa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFhrAzTyw5O6sfxlN5xl6Xk91V1Wz_Y3c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "205450097394-0cvtfh6tv43hrbte3f8me1veeif852fa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
