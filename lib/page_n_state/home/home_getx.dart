@@ -15,6 +15,9 @@ class HomeGetx extends GetxController {
   RxBool showAset = false.obs;
   RxList<AsetModel> listMarket = <AsetModel>[].obs;
 
+  RxBool isUserDataLoading = true.obs;
+  RxBool isMarketDataLoading = true.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -46,6 +49,8 @@ class HomeGetx extends GetxController {
     listMarket.value = responseData
         .map((item) => AsetModel.fromMap(item))
         .toList();
+
+    isMarketDataLoading.value = false;
   }
 
   Future<void> onGetUserData() async {
@@ -75,5 +80,7 @@ class HomeGetx extends GetxController {
     }
     priceData.add(double.parse(f.boxRead(key: MainConfig.stringRupiah)));
     asetValue.value = priceData.reduce((a, b) => a + b).toDouble();
+
+    isUserDataLoading.value = false;
   }
 }

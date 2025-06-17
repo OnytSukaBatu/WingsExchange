@@ -54,19 +54,7 @@ class HomePage extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Obx(
-                              () => w.text(
-                                data: getx.showAset.value
-                                    ? f.numFormat(
-                                        getx.asetValue.value,
-                                        symbol: 'Rp',
-                                      )
-                                    : 'Rp*****',
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
+                            widgetSaldo(),
                             Material(
                               color: Colors.transparent,
                               child: InkWell(
@@ -154,7 +142,11 @@ class HomePage extends StatelessWidget {
                         //   suffix: Icon(Icons.search, size: 16),
                         // ),
                         // w.gap(height: 16),
-                        widgetListMarket(),
+                        Obx(
+                          () => getx.isMarketDataLoading.value
+                              ? widgetListMarketLoading()
+                              : widgetListMarket(),
+                        ),
                         w.gap(height: 64),
                       ],
                     ),
@@ -168,6 +160,42 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  Widget widgetSaldo() {
+    return Obx(
+      () => w.text(
+        data: getx.showAset.value
+            ? getx.isUserDataLoading.value
+                  ? 'Memuat...'
+                  : f.numFormat(getx.asetValue.value, symbol: 'Rp')
+            : 'Rp*****',
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      ),
+    );
+  }
+
+  Widget widgetListMarketLoading() {
+    return Container(
+      width: Get.width,
+      padding: EdgeInsets.symmetric(vertical: 32),
+      child: Column(
+        children: [
+          CircularProgressIndicator(
+            color: Colors.black,
+            backgroundColor: Colors.transparent,
+          ),
+          w.gap(height: 16),
+          w.text(
+            data: 'Mengambil Data',
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget widgetListMarket() {
     return Obx(
       () => ListView.separated(
@@ -176,6 +204,7 @@ class HomePage extends StatelessWidget {
         itemCount: getx.listMarket.length,
         itemBuilder: (context, index) {
           AsetModel aset = getx.listMarket[index];
+
           return Material(
             color: Colors.transparent,
             child: InkWell(

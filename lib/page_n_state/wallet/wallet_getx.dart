@@ -13,6 +13,8 @@ class WalletGetx extends GetxController {
   RxBool showAset = false.obs;
   RxList<DataModel> realData = <DataModel>[].obs;
 
+  RxBool isLoading = true.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -63,9 +65,20 @@ class WalletGetx extends GetxController {
         ),
       );
     }
-
+    tempList.add(
+      DataModel(
+        id: 'rupiah-token',
+        price: 1,
+        aset: double.parse(f.boxRead(key: MainConfig.stringRupiah)),
+        image:
+            'https://coin-images.coingecko.com/coins/images/9441/large/57421944_1371636006308255_3647136573922738176_n.jpg?1696509533',
+        name: 'Rupiah',
+      ),
+    );
     realData.value = tempList;
     priceData.add(double.parse(f.boxRead(key: MainConfig.stringRupiah)));
     asetValue.value = priceData.reduce((a, b) => a + b).toDouble();
+
+    isLoading.value = false;
   }
 }
