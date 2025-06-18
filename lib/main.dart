@@ -3,15 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:wings/firebase_options.dart';
-import 'package:wings/fundamental/main_config.dart';
-import 'package:wings/fundamental/main_function.dart';
-import 'package:wings/fundamental/main_image_path.dart';
-import 'package:wings/fundamental/main_widget.dart';
-import 'package:wings/page_n_state/auth/auth_page.dart';
-import 'package:wings/page_n_state/pin/pin_page.dart';
+import 'package:wings/core/main_config.dart';
+import 'package:wings/core/main_function.dart';
+import 'package:wings/core/main_image_path.dart';
+import 'package:wings/core/main_widget.dart';
+import 'package:wings/injection_container.dart';
+import 'package:wings/presentation/auth/auth_page.dart';
+import 'package:wings/presentation/pin/pin_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initInjection();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await GetStorage.init();
   runApp(const MyApp());
