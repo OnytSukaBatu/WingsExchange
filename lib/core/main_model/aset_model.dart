@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'package:wings/domain/entities/aset_entity.dart';
 
 class AsetModel {
   final String id;
@@ -17,11 +17,7 @@ class AsetModel {
     required this.percent,
   });
 
-  factory AsetModel.fromJson(String str) => AsetModel.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory AsetModel.fromMap(Map<String, dynamic> json) => AsetModel(
+  factory AsetModel.fromArray(Map<String, dynamic> json) => AsetModel(
     id: json["id"],
     symbol: json["symbol"],
     name: json["name"],
@@ -30,12 +26,14 @@ class AsetModel {
     percent: json["price_change_percentage_24h"],
   );
 
-  Map<String, dynamic> toMap() => {
-    "id": id,
-    "symbol": symbol,
-    "name": name,
-    "image": image,
-    "current_price": currentPrice,
-    "price_change_percentage_24h": percent,
-  };
+  AsetEntity toEntity() {
+    return AsetEntity(
+      id: id,
+      symbol: symbol,
+      name: name,
+      image: image,
+      currentPrice: currentPrice,
+      percent: percent,
+    );
+  }
 }

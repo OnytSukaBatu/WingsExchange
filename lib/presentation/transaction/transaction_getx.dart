@@ -19,7 +19,7 @@ class TransactionGetx extends GetxController {
   late AsetModel aset;
   TextEditingController controller = TextEditingController();
   Timer? timer;
-  List data = jsonDecode(f.boxRead(key: MainConfig.stringTransaction));
+  List userData = [];
 
   RxInt resetIn = 60.obs;
   RxDouble fee = 0.0.obs;
@@ -34,8 +34,8 @@ class TransactionGetx extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    onGetArguments();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await onGetArguments();
       await onGetChart();
       await onGetData();
       onGetDataEveryMinute();
@@ -48,11 +48,19 @@ class TransactionGetx extends GetxController {
     timer?.cancel();
   }
 
-  void onGetArguments() {
+  Future<void> onGetArguments() async {
     if (Get.arguments is AsetModel) {
       aset = Get.arguments;
       currentPrice.value = aset.currentPrice.toDouble();
-      rupiah.value = double.parse(f.boxRead(key: MainConfig.stringRupiah));
+
+      String email = f.boxRead(key: MainConfig.stringEmail);
+
+      await usecase.getUserData(email: email).then((value) {
+        value.fold((left) {}, (right) {
+          rupiah.value = double.parse(right.rupiah);
+          userData = jsonDecode(right.data);
+        });
+      });
     } else {
       Get.back();
     }
@@ -73,11 +81,11 @@ class TransactionGetx extends GetxController {
 
     isDone.value = true;
 
-    int index = data.indexWhere((item) => item['id'] == aset.id);
+    int index = userData.indexWhere((item) => item['id'] == aset.id);
     if (index == -1) return;
     myCoin.value = f.getPrice(
-      oldPrice: data[index]['price'],
-      totalAset: data[index]['aset'],
+      oldPrice: userData[index]['price'],
+      totalAset: userData[index]['aset'],
       newPrice: currentPrice.value,
     );
   }
@@ -142,12 +150,12 @@ class TransactionGetx extends GetxController {
 
     double inputHarga = double.parse(controller.text);
     String id = aset.id;
-    int index = data.indexWhere((item) => item['id'] == id);
+    int index = userData.indexWhere((item) => item['id'] == id);
     double asetBaru = finalPrice.value;
 
     if (index != -1) {
-      Map<String, dynamic> item = data[index];
-      data[index] = DataModel(
+      Map<String, dynamic> item = userData[index];
+      userData[index] = DataModel(
         id: id,
         price: item['price'],
         aset: item['aset'] + asetBaru,
@@ -155,7 +163,7 @@ class TransactionGetx extends GetxController {
         name: aset.name,
       ).toMap();
     } else {
-      data.add(
+      userData.add(
         DataModel(
           id: id,
           price: currentPrice.value,
@@ -170,16 +178,13 @@ class TransactionGetx extends GetxController {
     String sisaSaldo = (rupiah.value - inputHarga).toString();
 
     Map<String, String> newData = {
-      'data': jsonEncode(data),
+      'data': jsonEncode(userData),
       'rupiah': sisaSaldo,
     };
 
     await usecase.updateUserData(uid: uid, data: newData).then((value) {
       value.fold((left) {}, (right) {});
     });
-
-    await f.boxWrite(key: MainConfig.stringRupiah, value: sisaSaldo);
-    await f.boxWrite(key: MainConfig.stringTransaction, value: data.toString());
 
     f.onEndLoading();
     Get.back();
@@ -195,13 +200,13 @@ class TransactionGetx extends GetxController {
     f.onShowLoading();
 
     double inputHarga = double.parse(controller.text);
-    int index = data.indexWhere((item) => item['id'] == aset.id);
+    int index = userData.indexWhere((item) => item['id'] == aset.id);
     double sisaAset = myCoin.value - inputHarga;
 
     if (sisaAset < 100) {
-      data.removeAt(index);
+      userData.removeAt(index);
     } else {
-      data[index] = DataModel(
+      userData[index] = DataModel(
         id: aset.id,
         price: currentPrice.value,
         aset: f.doubleD(sisaAset),
@@ -211,7 +216,7 @@ class TransactionGetx extends GetxController {
     }
 
     rupiah.value = f.doubleD(rupiah.value + finalPrice.value);
-    String stringData = jsonEncode(data);
+    String stringData = jsonEncode(userData);
     String uid = await f.secureRead(key: MainConfig.stringID);
     Map<String, String> newData = {
       'data': stringData,
@@ -221,9 +226,6 @@ class TransactionGetx extends GetxController {
     await usecase.updateUserData(uid: uid, data: newData).then((value) {
       value.fold((left) {}, (right) {});
     });
-
-    await f.boxWrite(key: MainConfig.stringRupiah, value: '${rupiah.value}');
-    await f.boxWrite(key: MainConfig.stringTransaction, value: stringData);
 
     f.onEndLoading();
     Get.back();

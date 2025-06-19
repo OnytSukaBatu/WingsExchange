@@ -93,8 +93,6 @@ class RegisterGetx extends GetxController {
         });
     await f.secureWrite(key: MainConfig.stringPIN, value: pin);
     await f.boxWrite(key: MainConfig.stringDisplay, value: controller.text);
-    await f.boxWrite(key: MainConfig.stringTransaction, value: '[]');
-    await f.boxWrite(key: MainConfig.stringRupiah, value: '0');
     await f.boxWrite(key: MainConfig.boolLogin, value: true);
     await f.secureWrite(key: MainConfig.stringID, value: doc.id);
     f.onEndLoading();

@@ -1,10 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
-import 'package:wings/core/main_config.dart';
 import 'package:wings/core/main_widget.dart';
 
 class MainFunction with FuncGetStorage, FuncSecureStorage {
@@ -74,22 +72,22 @@ class MainFunction with FuncGetStorage, FuncSecureStorage {
     Get.back();
   }
 
-  Future<void> onGetUserData() async {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('main-user')
-        .where('email', isEqualTo: f.boxRead(key: MainConfig.stringEmail))
-        .limit(1)
-        .get();
+  // Future<void> onGetUserData() async {
+  //   QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+  //       .collection('main-user')
+  //       .where('email', isEqualTo: f.boxRead(key: MainConfig.stringEmail))
+  //       .limit(1)
+  //       .get();
 
-    Object? object = querySnapshot.docs.first.data();
-    Map<String, dynamic> data = object as Map<String, dynamic>;
+  //   Object? object = querySnapshot.docs.first.data();
+  //   Map<String, dynamic> data = object as Map<String, dynamic>;
 
-    String transaction = data['data'];
-    String rupiah = data['rupiah'];
+  //   String transaction = data['data'];
+  //   String rupiah = data['rupiah'];
 
-    await f.boxWrite(key: MainConfig.stringTransaction, value: transaction);
-    await f.boxWrite(key: MainConfig.stringRupiah, value: rupiah);
-  }
+  //   await f.boxWrite(key: MainConfig.stringTransaction, value: transaction);
+  //   await f.boxWrite(key: MainConfig.stringRupiah, value: rupiah);
+  // }
 
   String numFormat(num number, {String? symbol}) {
     NumberFormat formatter = NumberFormat.currency(

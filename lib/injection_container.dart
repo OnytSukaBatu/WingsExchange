@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:wings/data/datasources/dio_datasource.dart';
@@ -13,8 +14,9 @@ final injection = GetIt.instance;
 
 Future<void> initInjection() async {
   injection.registerLazySingleton(() => Dio());
+  injection.registerLazySingleton(() => FirebaseFirestore.instance);
 
-  injection.registerLazySingleton(() => FirebaseRemoteDataSource());
+  injection.registerLazySingleton(() => FirebaseRemoteDataSource(injection()));
   injection.registerLazySingleton(() => DioRemoteDataSource(injection()));
 
   injection.registerLazySingleton<FirebaseRepository>(

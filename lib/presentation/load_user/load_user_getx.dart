@@ -3,10 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wings/core/main_config.dart';
 import 'package:wings/core/main_function.dart';
+import 'package:wings/domain/usecases/firebase_usecase.dart';
+import 'package:wings/injection_container.dart';
 import 'package:wings/presentation/pin/pin_page.dart';
 import 'package:wings/presentation/register/register_page.dart';
 
 class LoadUserGetx extends GetxController {
+  FirebaseUsecase usecase = injection<FirebaseUsecase>();
+
   @override
   void onInit() {
     super.onInit();
@@ -38,13 +42,9 @@ class LoadUserGetx extends GetxController {
 
       String pin = data['pin'];
       String display = data['display'];
-      String transaction = data['data'];
-      String rupiah = data['rupiah'];
 
       await f.secureWrite(key: MainConfig.stringPIN, value: pin);
       await f.boxWrite(key: MainConfig.stringDisplay, value: display);
-      await f.boxWrite(key: MainConfig.stringTransaction, value: transaction);
-      await f.boxWrite(key: MainConfig.stringRupiah, value: rupiah);
       await f.boxWrite(key: MainConfig.boolLogin, value: true);
       await f.secureWrite(key: MainConfig.stringID, value: id);
 

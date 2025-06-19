@@ -5,10 +5,14 @@ import 'package:get/get.dart';
 import 'package:wings/core/main_config.dart';
 import 'package:wings/core/main_function.dart';
 import 'package:dio/dio.dart' as dio;
+import 'package:wings/core/main_image_path.dart';
 import 'package:wings/core/main_model/data_model.dart';
+import 'package:wings/domain/usecases/firebase_usecase.dart';
+import 'package:wings/injection_container.dart';
 
 class WalletGetx extends GetxController {
-  List data = jsonDecode(f.boxRead(key: MainConfig.stringTransaction));
+  FirebaseUsecase usecase = injection<FirebaseUsecase>();
+
   RxDouble asetValue = 0.0.obs;
   RxBool showAset = false.obs;
   RxList<DataModel> realData = <DataModel>[].obs;
@@ -28,13 +32,31 @@ class WalletGetx extends GetxController {
   }
 
   Future<void> onGetUserData() async {
-    await f.onGetUserData();
-    data = jsonDecode(f.boxRead(key: MainConfig.stringTransaction));
+    List userData = [];
+    String email = f.boxRead(key: MainConfig.stringEmail);
 
     List<num> priceData = <num>[];
     List<DataModel> tempList = [];
 
-    for (Map<String, dynamic> i in data) {
+    await usecase.getUserData(email: email).then((value) {
+      value.fold((left) {}, (right) {
+        userData = jsonDecode(right.data);
+
+        tempList.add(
+          DataModel(
+            id: 'rupiah-token',
+            price: 1,
+            aset: double.parse(right.rupiah),
+            image: ImagePath.networkRupiah,
+            name: 'Rupiah',
+          ),
+        );
+
+        priceData.add(double.parse(right.rupiah));
+      });
+    });
+
+    for (Map<String, dynamic> i in userData) {
       dio.Response respose = await dio.Dio().get(
         'https://api.coingecko.com/api/v3/simple/price?vs_currencies=idr&ids=${i['id']}',
         options: dio.Options(
@@ -65,18 +87,8 @@ class WalletGetx extends GetxController {
         ),
       );
     }
-    tempList.add(
-      DataModel(
-        id: 'rupiah-token',
-        price: 1,
-        aset: double.parse(f.boxRead(key: MainConfig.stringRupiah)),
-        image:
-            'https://coin-images.coingecko.com/coins/images/9441/large/57421944_1371636006308255_3647136573922738176_n.jpg?1696509533',
-        name: 'Rupiah',
-      ),
-    );
+
     realData.value = tempList;
-    priceData.add(double.parse(f.boxRead(key: MainConfig.stringRupiah)));
     asetValue.value = priceData.reduce((a, b) => a + b).toDouble();
 
     isLoading.value = false;

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wings/core/main_function.dart';
 import 'package:wings/core/main_image_path.dart';
-import 'package:wings/core/main_model/aset_model.dart';
 import 'package:wings/core/main_widget.dart';
+import 'package:wings/domain/entities/aset_entity.dart';
 import 'package:wings/presentation/home/home_getx.dart';
 import 'package:wings/presentation/transaction/transaction_page.dart';
 
@@ -203,7 +203,7 @@ class HomePage extends StatelessWidget {
         physics: NeverScrollableScrollPhysics(),
         itemCount: getx.listMarket.length,
         itemBuilder: (context, index) {
-          AsetModel aset = getx.listMarket[index];
+          AsetEntity aset = getx.listMarket[index];
 
           return Material(
             color: Colors.transparent,

@@ -1,19 +1,23 @@
 import 'dart:convert';
 
-import 'package:dio/dio.dart' as dio;
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:wings/core/main_config.dart';
 import 'package:wings/core/main_function.dart';
-import 'package:wings/core/main_model/aset_model.dart';
+import 'package:wings/domain/entities/aset_entity.dart';
+import 'package:wings/domain/usecases/dio_usecase.dart';
+import 'package:wings/domain/usecases/firebase_usecase.dart';
+import 'package:wings/injection_container.dart';
 
 class HomeGetx extends GetxController {
+  FirebaseUsecase firebaseUsecase = injection<FirebaseUsecase>();
+  DioUsecase dioUsecase = injection<DioUsecase>();
+
   TextEditingController controller = TextEditingController();
-  List userData = jsonDecode(f.boxRead(key: MainConfig.stringTransaction));
 
   RxDouble asetValue = 0.0.obs;
   RxBool showAset = false.obs;
-  RxList<AsetModel> listMarket = <AsetModel>[].obs;
+  RxList<AsetEntity> listMarket = <AsetEntity>[].obs;
 
   RxBool isUserDataLoading = true.obs;
   RxBool isMarketDataLoading = true.obs;
@@ -37,50 +41,49 @@ class HomeGetx extends GetxController {
   }
 
   Future<void> onGetListMarket() async {
-    dio.Response<dynamic> response = await dio.Dio().get(
-      'https://api.coingecko.com/api/v3/coins/markets?vs_currency=idr',
-      options: dio.Options(
-        headers: {
-          'x-cg-demo-api-key': await f.secureRead(key: MainConfig.stringApiKey),
-        },
-      ),
-    );
-    List<dynamic> responseData = response.data;
-    listMarket.value = responseData
-        .map((item) => AsetModel.fromMap(item))
-        .toList();
+    await dioUsecase.getListMarket().then((value) {
+      value.fold((left) {}, (right) {
+        listMarket.value = right;
+      });
+    });
 
     isMarketDataLoading.value = false;
   }
 
   Future<void> onGetUserData() async {
-    await f.onGetUserData();
-    userData = jsonDecode(f.boxRead(key: MainConfig.stringTransaction));
+    List userData = [];
+    String email = f.boxRead(key: MainConfig.stringEmail);
+
     List<num> priceData = <num>[];
+
+    await firebaseUsecase.getUserData(email: email).then((value) {
+      value.fold((left) {}, (right) {
+        priceData.add(double.parse(right.rupiah));
+        userData = jsonDecode(right.data);
+      });
+    });
+
     for (Map<String, dynamic> i in userData) {
-      dio.Response respose = await dio.Dio().get(
-        'https://api.coingecko.com/api/v3/simple/price?vs_currencies=idr&ids=${i['id']}',
-        options: dio.Options(
-          headers: {
-            'x-cg-demo-api-key': await f.secureRead(
-              key: MainConfig.stringApiKey,
-            ),
-          },
-        ),
-      );
-      Map<String, dynamic> responseData = respose.data;
-      num currentPrice = responseData[i['id']]['idr'];
+      num? currentPrice;
+
+      await dioUsecase.getAsetPrice(id: i['id']).then((value) {
+        value.fold((left) {}, (right) {
+          currentPrice = right;
+        });
+      });
+
+      if (currentPrice == null) return;
+
       priceData.add(
         f.getPrice(
           oldPrice: i['price'],
           totalAset: i['aset'],
-          newPrice: currentPrice.toDouble(),
+          newPrice: currentPrice?.toDouble() ?? 0,
         ),
       );
     }
-    priceData.add(double.parse(f.boxRead(key: MainConfig.stringRupiah)));
-    asetValue.value = priceData.reduce((a, b) => a + b).toDouble();
 
+    asetValue.value = priceData.reduce((a, b) => a + b).toDouble();
     isUserDataLoading.value = false;
   }
 }
