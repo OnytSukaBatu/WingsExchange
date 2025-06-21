@@ -28,44 +28,23 @@ class RegisterPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                w.text(
-                  data: 'Sebelum Melanjutkan Buat Username Terlebih Dahulu',
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
+                w.text(data: 'Sebelum Melanjutkan Buat Username Terlebih Dahulu', fontWeight: FontWeight.bold, fontSize: 16),
                 w.gap(height: 16),
                 w.field(
                   controller: getx.controller,
-                  label: w.text(
-                    data: 'Masukan Username',
-                    fontSize: 12,
-                    color: Colors.grey,
-                  ),
+                  label: w.text(data: 'Masukan Username', fontSize: 12, color: Colors.grey),
                   maxLength: 16,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
-                  ],
+                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]'))],
                   validator: getx.displayValidator,
                 ),
                 w.gap(height: 5),
                 Row(
                   children: [
-                    Obx(
-                      () => w.checkBox(
-                        value: getx.snk.value,
-                        onChanged: getx.onChanged,
-                        activeColor: Colors.black,
-                        checkColors: Colors.white,
-                      ),
-                    ),
+                    Obx(() => w.checkBox(value: getx.snk.value, onChanged: getx.onChanged, activeColor: Colors.black, checkColors: Colors.white)),
                     Expanded(
                       child: GestureDetector(
                         onTap: getx.onShowSNK,
-                        child: w.text(
-                          data: 'saya menyetujui syarat dan ketentuan',
-                          fontSize: 12,
-                          textAlign: TextAlign.start,
-                        ),
+                        child: w.text(data: 'saya menyetujui syarat dan ketentuan', fontSize: 12, textAlign: TextAlign.start),
                       ),
                     ),
                   ],

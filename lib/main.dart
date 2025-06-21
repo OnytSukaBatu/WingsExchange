@@ -24,10 +24,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      home: GenesisPage(),
-      debugShowCheckedModeBanner: false,
-    );
+    return GetMaterialApp(home: GenesisPage(), debugShowCheckedModeBanner: false);
   }
 }
 
@@ -50,10 +47,7 @@ class GenesisPage extends StatelessWidget {
             w.gap(height: 16),
             SizedBox(
               width: 160,
-              child: LinearProgressIndicator(
-                backgroundColor: Colors.grey,
-                color: Colors.black,
-              ),
+              child: LinearProgressIndicator(backgroundColor: Colors.grey, color: Colors.black),
             ),
             w.gap(height: 160),
           ],

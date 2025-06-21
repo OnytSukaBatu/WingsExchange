@@ -42,45 +42,53 @@ class HomeGetx extends GetxController {
 
   Future<void> onGetListMarket() async {
     await dioUsecase.getListMarket().then((value) {
-      value.fold((left) {}, (right) {
-        listMarket.value = right;
-      });
+      value.fold(
+        (left) {
+          f.onShowSnackbar(title: 'Terjadi masalah', message: 'Gagal mendapatkan data market');
+        },
+        (right) {
+          listMarket.value = right;
+        },
+      );
     });
 
     isMarketDataLoading.value = false;
   }
 
   Future<void> onGetUserData() async {
-    List userData = [];
     String email = f.boxRead(key: MainConfig.stringEmail);
-
+    List userData = [];
     List<num> priceData = <num>[];
 
     await firebaseUsecase.getUserData(email: email).then((value) {
-      value.fold((left) {}, (right) {
-        priceData.add(double.parse(right.rupiah));
-        userData = jsonDecode(right.data);
-      });
+      value.fold(
+        (left) {
+          f.onShowSnackbar(title: 'Terjadi masalah', message: 'Gagal mendapatkan data pengguna');
+        },
+        (right) {
+          priceData.add(double.parse(right.rupiah));
+          userData = jsonDecode(right.data);
+        },
+      );
     });
 
     for (Map<String, dynamic> i in userData) {
       num? currentPrice;
 
       await dioUsecase.getAsetPrice(id: i['id']).then((value) {
-        value.fold((left) {}, (right) {
-          currentPrice = right;
-        });
+        value.fold(
+          (left) {
+            f.onShowSnackbar(title: 'Terjadi masalah', message: 'Gagal mendapatkan data harga aset');
+          },
+          (right) {
+            currentPrice = right;
+          },
+        );
       });
 
       if (currentPrice == null) return;
 
-      priceData.add(
-        f.getPrice(
-          oldPrice: i['price'],
-          totalAset: i['aset'],
-          newPrice: currentPrice?.toDouble() ?? 0,
-        ),
-      );
+      priceData.add(f.getPrice(oldPrice: i['price'], totalAset: i['aset'], newPrice: currentPrice?.toDouble() ?? 0));
     }
 
     asetValue.value = priceData.reduce((a, b) => a + b).toDouble();

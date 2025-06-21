@@ -3,15 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class MainWidget {
-  Widget text({
-    required String data,
-    bool? softWrap,
-    TextStyle? style,
-    TextAlign? textAlign,
-    Color? color,
-    double? fontSize,
-    FontWeight? fontWeight,
-  }) {
+  Widget text({required String data, bool? softWrap, TextStyle? style, TextAlign? textAlign, Color? color, double? fontSize, FontWeight? fontWeight}) {
     softWrap ??= true;
     style ??= GoogleFonts.poppins();
     textAlign ??= TextAlign.center;
@@ -20,11 +12,7 @@ class MainWidget {
     return Text(
       data,
       softWrap: softWrap,
-      style: style.copyWith(
-        color: color,
-        fontSize: fontSize,
-        fontWeight: fontWeight,
-      ),
+      style: style.copyWith(color: color, fontSize: fontSize, fontWeight: fontWeight),
       textAlign: textAlign,
     );
   }
@@ -34,7 +22,7 @@ class MainWidget {
   }
 
   Widget button({
-    required Function() onPressed,
+    Function()? onPressed,
     required Widget child,
     Function()? onLongPress,
     Color? backgroundColor,
@@ -152,29 +140,15 @@ class MainWidget {
       maxLength: maxLength,
       onChanged: onChanged,
       onTapOutside: onTapOutside,
-      style: GoogleFonts.poppins(
-        color: textColor,
-        fontSize: fontSize,
-        fontWeight: fontWeight,
-      ),
+      style: GoogleFonts.poppins(color: textColor, fontSize: fontSize, fontWeight: fontWeight),
       readOnly: readOnly,
       validator: validator,
       inputFormatters: inputFormatters,
     );
   }
 
-  Widget checkBox({
-    required bool value,
-    required Function(bool?) onChanged,
-    Color? activeColor,
-    Color? checkColors,
-  }) {
-    return Checkbox(
-      value: value,
-      onChanged: onChanged,
-      activeColor: activeColor,
-      checkColor: checkColors,
-    );
+  Widget checkBox({required bool value, required Function(bool?) onChanged, Color? activeColor, Color? checkColors}) {
+    return Checkbox(value: value, onChanged: onChanged, activeColor: activeColor, checkColor: checkColors);
   }
 }
 

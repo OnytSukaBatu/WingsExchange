@@ -1,13 +1,17 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wings/core/main_config.dart';
 import 'package:wings/core/main_function.dart';
 import 'package:wings/core/main_widget.dart';
+import 'package:wings/data/models/user_model.dart';
+import 'package:wings/domain/usecases/firebase_usecase.dart';
+import 'package:wings/injection_container.dart';
 import 'package:wings/presentation/dashboard/dashboard_page.dart';
 import 'package:wings/presentation/pin/pin_page.dart';
 
 class RegisterGetx extends GetxController {
+  FirebaseUsecase usecase = injection<FirebaseUsecase>();
+
   GlobalKey<FormState> globalKey = GlobalKey<FormState>();
   TextEditingController controller = TextEditingController();
   RxBool snk = false.obs;
@@ -40,10 +44,7 @@ class RegisterGetx extends GetxController {
               },
               backgroundColor: Colors.white,
               borderColor: Colors.black,
-              child: w.text(
-                data: 'Saya menyetujui Syarat dan Ketentuan yang berlaku',
-                fontSize: 12,
-              ),
+              child: w.text(data: 'Saya menyetujui Syarat dan Ketentuan yang berlaku', fontSize: 12),
             ),
           ),
         ],
@@ -82,21 +83,30 @@ class RegisterGetx extends GetxController {
     }
 
     f.onShowLoading();
-    DocumentReference doc = await FirebaseFirestore.instance
-        .collection('main-user')
-        .add({
-          'email': f.boxRead(key: MainConfig.stringEmail),
-          'display': controller.text,
-          'data': '[]',
-          'pin': pin,
-          'rupiah': '0',
-        });
-    await f.secureWrite(key: MainConfig.stringPIN, value: pin);
-    await f.boxWrite(key: MainConfig.stringDisplay, value: controller.text);
-    await f.boxWrite(key: MainConfig.boolLogin, value: true);
-    await f.secureWrite(key: MainConfig.stringID, value: doc.id);
-    f.onEndLoading();
+    String email = f.boxRead(key: MainConfig.stringEmail);
+    UserModel userData = UserModel(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      data: '[]',
+      display: controller.text,
+      email: email,
+      pin: pin,
+      rupiah: '0',
+    );
 
+    await usecase.saveUserData(model: userData).then((value) {
+      value.fold(
+        (left) {
+          f.onShowSnackbar(title: 'Terjadi masalah', message: 'Gagal menyimpan data pengguna');
+        },
+        (right) async {
+          await f.secureWrite(key: MainConfig.stringPIN, value: pin);
+          await f.boxWrite(key: MainConfig.stringDisplay, value: controller.text);
+          await f.boxWrite(key: MainConfig.boolLogin, value: true);
+        },
+      );
+    });
+
+    f.onEndLoading();
     Get.offAll(() => DashboardPage());
   }
 

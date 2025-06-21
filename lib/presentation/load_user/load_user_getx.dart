@@ -1,15 +1,16 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wings/core/main_config.dart';
 import 'package:wings/core/main_function.dart';
+import 'package:wings/domain/usecases/dio_usecase.dart';
 import 'package:wings/domain/usecases/firebase_usecase.dart';
 import 'package:wings/injection_container.dart';
 import 'package:wings/presentation/pin/pin_page.dart';
 import 'package:wings/presentation/register/register_page.dart';
 
 class LoadUserGetx extends GetxController {
-  FirebaseUsecase usecase = injection<FirebaseUsecase>();
+  DioUsecase dioUsecase = injection<DioUsecase>();
+  FirebaseUsecase firebaseUsecase = injection<FirebaseUsecase>();
 
   @override
   void onInit() {
@@ -20,37 +21,32 @@ class LoadUserGetx extends GetxController {
   }
 
   void onCheckUser() async {
-    DocumentSnapshot<Map<String, dynamic>> docSnapshot = await FirebaseFirestore
-        .instance
-        .collection('main-config')
-        .doc('main')
-        .get();
+    String email = f.boxRead(key: MainConfig.stringEmail);
 
-    Map<String, dynamic>? data = docSnapshot.data();
-    await f.secureWrite(key: MainConfig.stringApiKey, value: data?['api-key']);
+    await firebaseUsecase.getApiKey().then((value) {
+      value.fold(
+        (left) {
+          f.onShowSnackbar(title: 'Terjadi masalah', message: 'Gagal mendapatkan data kunci sistem');
+        },
+        (right) async {
+          await f.secureWrite(key: MainConfig.stringApiKey, value: right);
+        },
+      );
+    });
 
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('main-user')
-        .where('email', isEqualTo: f.boxRead(key: MainConfig.stringEmail))
-        .limit(1)
-        .get();
+    await firebaseUsecase.getUserData(email: email).then((value) {
+      value.fold(
+        (left) {
+          Get.offAll(() => RegisterPage());
+        },
+        (right) async {
+          await f.secureWrite(key: MainConfig.stringPIN, value: right.pin);
+          await f.boxWrite(key: MainConfig.stringDisplay, value: right.display);
+          await f.boxWrite(key: MainConfig.boolLogin, value: true);
 
-    if (querySnapshot.docs.isNotEmpty) {
-      String id = querySnapshot.docs.first.id;
-      Object? object = querySnapshot.docs.first.data();
-      Map<String, dynamic> data = object as Map<String, dynamic>;
-
-      String pin = data['pin'];
-      String display = data['display'];
-
-      await f.secureWrite(key: MainConfig.stringPIN, value: pin);
-      await f.boxWrite(key: MainConfig.stringDisplay, value: display);
-      await f.boxWrite(key: MainConfig.boolLogin, value: true);
-      await f.secureWrite(key: MainConfig.stringID, value: id);
-
-      Get.offAll(() => PinPage(), arguments: PINmethod.secure);
-    } else {
-      Get.offAll(() => RegisterPage());
-    }
+          Get.offAll(() => PinPage(), arguments: PINmethod.secure);
+        },
+      );
+    });
   }
 }

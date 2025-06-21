@@ -23,13 +23,7 @@ class PinPage extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Obx(
-                        () => w.text(
-                          data: getx.message.value,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      Obx(() => w.text(data: getx.message.value, fontSize: 24, fontWeight: FontWeight.bold)),
                       w.gap(height: 16),
                       Obx(
                         () => Row(
@@ -41,10 +35,7 @@ class PinPage extends StatelessWidget {
                               margin: EdgeInsets.symmetric(horizontal: 8),
                               width: 16,
                               height: 16,
-                              decoration: BoxDecoration(
-                                color: filled ? Colors.black : Colors.grey,
-                                shape: BoxShape.circle,
-                              ),
+                              decoration: BoxDecoration(color: filled ? Colors.black : Colors.grey, shape: BoxShape.circle),
                             );
                           }),
                         ),
@@ -107,11 +98,7 @@ class PinPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(32),
         backgroundColor: Colors.white,
         borderColor: Colors.black,
-        child: w.text(
-          data: '$input',
-          fontSize: 32,
-          fontWeight: FontWeight.bold,
-        ),
+        child: w.text(data: '$input', fontSize: 32, fontWeight: FontWeight.bold),
       ),
     );
   }

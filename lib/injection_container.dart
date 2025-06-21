@@ -19,12 +19,8 @@ Future<void> initInjection() async {
   injection.registerLazySingleton(() => FirebaseRemoteDataSource(injection()));
   injection.registerLazySingleton(() => DioRemoteDataSource(injection()));
 
-  injection.registerLazySingleton<FirebaseRepository>(
-    () => FirebaseRepositoryImpl(injection()),
-  );
-  injection.registerLazySingleton<DioRepository>(
-    () => DioRepositoryImpl(injection()),
-  );
+  injection.registerLazySingleton<FirebaseRepository>(() => FirebaseRepositoryImpl(injection()));
+  injection.registerLazySingleton<DioRepository>(() => DioRepositoryImpl(injection()));
 
   injection.registerLazySingleton(() => FirebaseUsecase(injection()));
   injection.registerLazySingleton(() => DioUsecase(injection()));

@@ -18,11 +18,7 @@ class TransactionPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         leading: IconButton(onPressed: Get.back, icon: Icon(Icons.arrow_back)),
-        title: w.text(
-          data: 'Transaksi',
-          fontWeight: FontWeight.bold,
-          fontSize: 16,
-        ),
+        title: w.text(data: 'Transaksi', fontWeight: FontWeight.bold, fontSize: 16),
       ),
       body: SafeArea(
         child: Obx(
@@ -35,21 +31,13 @@ class TransactionPage extends StatelessWidget {
                         children: [
                           SizedBox(
                             width: 32,
-                            child: ClipOval(
-                              child: CachedNetworkImage(
-                                imageUrl: getx.aset.image,
-                              ),
-                            ),
+                            child: ClipOval(child: CachedNetworkImage(imageUrl: getx.aset.image)),
                           ),
                           w.gap(width: 5),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              w.text(
-                                data: getx.aset.name,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              w.text(data: getx.aset.name, fontSize: 16, fontWeight: FontWeight.bold),
                               w.text(data: getx.aset.id, fontSize: 12),
                             ],
                           ),
@@ -57,20 +45,8 @@ class TransactionPage extends StatelessWidget {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              w.text(
-                                data: 'Nilai ${getx.aset.name}',
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              Obx(
-                                () => w.text(
-                                  data: f.numFormat(
-                                    getx.currentPrice.value,
-                                    symbol: 'Rp',
-                                  ),
-                                  fontSize: 12,
-                                ),
-                              ),
+                              w.text(data: 'Nilai ${getx.aset.name}', fontSize: 16, fontWeight: FontWeight.bold),
+                              Obx(() => w.text(data: f.numFormat(getx.currentPrice.value, symbol: 'Rp'), fontSize: 12)),
                             ],
                           ),
                         ],
@@ -94,13 +70,7 @@ class TransactionPage extends StatelessWidget {
                               gridData: FlGridData(show: false),
                               lineBarsData: [
                                 LineChartBarData(
-                                  spots: List.generate(
-                                    getx.chartData.length,
-                                    (index) => FlSpot(
-                                      index.toDouble(),
-                                      getx.chartData[index],
-                                    ),
-                                  ),
+                                  spots: List.generate(getx.chartData.length, (index) => FlSpot(index.toDouble(), getx.chartData[index])),
                                   isCurved: false,
                                   color: Colors.blue,
                                   barWidth: 1,
@@ -117,60 +87,42 @@ class TransactionPage extends StatelessWidget {
                         children: [
                           w.text(data: 'Weekly Chart ${getx.aset.name} by'),
                           w.gap(width: 2),
-                          w.text(
-                            data: 'Coingecko',
-                            fontWeight: FontWeight.bold,
-                          ),
+                          w.text(data: 'Coingecko', fontWeight: FontWeight.bold),
                         ],
                       ),
                     ],
                   ),
                 )
               : Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.black,
-                    backgroundColor: Colors.transparent,
-                  ),
+                  child: CircularProgressIndicator(color: Colors.black, backgroundColor: Colors.transparent),
                 ),
         ),
       ),
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Expanded(
-                child: w.button(
-                  // onPressed: getx.onBeli,
-                  onPressed: () {
-                    getx.onViewTransaction(isBuy: true);
-                  },
-                  backgroundColor: Colors.green,
-                  borderColor: Colors.black,
-                  child: w.text(
-                    data: 'Beli',
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+          child: Obx(
+            () => Row(
+              children: [
+                Expanded(
+                  child: w.button(
+                    onPressed: getx.isDone.value ? () => getx.onViewTransaction(isBuy: true) : null,
+                    backgroundColor: Colors.green,
+                    borderColor: Colors.black,
+                    child: w.text(data: 'Beli', color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ),
-              ),
-              w.gap(width: 16),
-              Expanded(
-                child: w.button(
-                  // onPressed: getx.onJual,
-                  onPressed: () {
-                    getx.onViewTransaction(isBuy: false);
-                  },
-                  backgroundColor: Colors.red,
-                  borderColor: Colors.black,
-                  child: w.text(
-                    data: 'jual',
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+                w.gap(width: 16),
+                Expanded(
+                  child: w.button(
+                    onPressed: getx.isDone.value ? () => getx.onViewTransaction(isBuy: false) : null,
+                    backgroundColor: Colors.red,
+                    borderColor: Colors.black,
+                    child: w.text(data: 'jual', color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

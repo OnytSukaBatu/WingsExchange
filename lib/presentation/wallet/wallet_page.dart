@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wings/core/main_function.dart';
 import 'package:wings/core/main_image_path.dart';
-import 'package:wings/core/main_model/data_model.dart';
 import 'package:wings/core/main_widget.dart';
+import 'package:wings/data/models/data_model.dart';
+import 'package:wings/domain/entities/aset_entity.dart';
+import 'package:wings/presentation/transaction/transaction_page.dart';
 import 'package:wings/presentation/wallet/wallet_getx.dart';
 
 class WalletPage extends StatelessWidget {
@@ -21,11 +23,7 @@ class WalletPage extends StatelessWidget {
         title: Row(
           children: [
             Image.asset(ImagePath.icon_dark, scale: 16),
-            w.text(
-              data: 'Wings',
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
+            w.text(data: 'Wings', color: Colors.white, fontWeight: FontWeight.bold),
           ],
         ),
       ),
@@ -40,11 +38,7 @@ class WalletPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      w.text(
-                        data: 'Nilai Total Aset',
-                        fontSize: 14,
-                        color: Colors.white,
-                      ),
+                      w.text(data: 'Nilai Total Aset', fontSize: 14, color: Colors.white),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -53,14 +47,7 @@ class WalletPage extends StatelessWidget {
                             color: Colors.transparent,
                             child: InkWell(
                               onTap: getx.onShowAset,
-                              child: Obx(
-                                () => Icon(
-                                  getx.showAset.value
-                                      ? Icons.visibility
-                                      : Icons.visibility_off,
-                                  color: Colors.white,
-                                ),
-                              ),
+                              child: Obx(() => Icon(getx.showAset.value ? Icons.visibility : Icons.visibility_off, color: Colors.white)),
                             ),
                           ),
                         ],
@@ -72,16 +59,9 @@ class WalletPage extends StatelessWidget {
                   padding: EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(16),
-                      topRight: Radius.circular(16),
-                    ),
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
                   ),
-                  child: Obx(
-                    () => getx.isLoading.value
-                        ? widgetListAsetLoading()
-                        : widgetListAset(),
-                  ),
+                  child: Obx(() => getx.isLoading.value ? widgetListAsetLoading() : widgetListAset()),
                 ),
               ],
             ),
@@ -112,16 +92,9 @@ class WalletPage extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 32),
       child: Column(
         children: [
-          CircularProgressIndicator(
-            color: Colors.black,
-            backgroundColor: Colors.transparent,
-          ),
+          CircularProgressIndicator(color: Colors.black, backgroundColor: Colors.transparent),
           w.gap(height: 16),
-          w.text(
-            data: 'Mengambil Data',
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-          ),
+          w.text(data: 'Mengambil Data', fontSize: 12, fontWeight: FontWeight.bold),
         ],
       ),
     );
@@ -135,13 +108,14 @@ class WalletPage extends StatelessWidget {
         itemCount: getx.realData.length,
         itemBuilder: (context, index) {
           DataModel data = getx.realData[index];
+          AsetEntity asetData = AsetEntity(id: data.id, symbol: '', name: data.name, image: data.image, currentPrice: 0, percent: 0);
 
           return Material(
             color: Colors.transparent,
             child: InkWell(
               onTap: () async {
-                // await Get.to(() => TransactionPage(), arguments: aset);
-                // getx.onGetUserData();
+                await Get.to(() => TransactionPage(), arguments: asetData);
+                getx.onGetUserData();
               },
               child: Padding(
                 padding: const EdgeInsets.all(5),
@@ -149,19 +123,13 @@ class WalletPage extends StatelessWidget {
                   children: [
                     SizedBox(
                       width: 32,
-                      child: ClipOval(
-                        child: CachedNetworkImage(imageUrl: data.image),
-                      ),
+                      child: ClipOval(child: CachedNetworkImage(imageUrl: data.image)),
                     ),
                     w.gap(width: 8),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        w.text(
-                          data: data.name,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        w.text(data: data.name, fontSize: 12, fontWeight: FontWeight.bold),
                         w.text(data: data.id, fontSize: 10),
                       ],
                     ),

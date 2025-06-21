@@ -5,18 +5,19 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:wings/core/main_config.dart';
 import 'package:wings/core/main_function.dart';
-import 'package:wings/core/main_model/aset_model.dart';
-import 'package:dio/dio.dart' as dio;
-import 'package:wings/core/main_model/data_model.dart';
 import 'package:wings/core/main_widget.dart';
+import 'package:wings/data/models/data_model.dart';
+import 'package:wings/domain/entities/aset_entity.dart';
+import 'package:wings/domain/usecases/dio_usecase.dart';
 import 'package:wings/domain/usecases/firebase_usecase.dart';
 import 'package:wings/injection_container.dart';
 
 class TransactionGetx extends GetxController {
-  FirebaseUsecase usecase = injection<FirebaseUsecase>();
+  DioUsecase dioUsecase = injection<DioUsecase>();
+  FirebaseUsecase firebaseUsecase = injection<FirebaseUsecase>();
 
   final GlobalKey<FormState> globalKey = GlobalKey<FormState>();
-  late AsetModel aset;
+  late AsetEntity aset;
   TextEditingController controller = TextEditingController();
   Timer? timer;
   List userData = [];
@@ -30,6 +31,8 @@ class TransactionGetx extends GetxController {
   RxBool isDone = false.obs;
   RxBool onBuy = true.obs;
   RxList<double> chartData = <double>[].obs;
+
+  String uid = '';
 
   @override
   void onInit() {
@@ -49,17 +52,23 @@ class TransactionGetx extends GetxController {
   }
 
   Future<void> onGetArguments() async {
-    if (Get.arguments is AsetModel) {
+    if (Get.arguments is AsetEntity) {
       aset = Get.arguments;
       currentPrice.value = aset.currentPrice.toDouble();
 
       String email = f.boxRead(key: MainConfig.stringEmail);
 
-      await usecase.getUserData(email: email).then((value) {
-        value.fold((left) {}, (right) {
-          rupiah.value = double.parse(right.rupiah);
-          userData = jsonDecode(right.data);
-        });
+      await firebaseUsecase.getUserData(email: email).then((value) {
+        value.fold(
+          (left) {
+            f.onShowSnackbar(title: 'Terjadi masalah', message: 'Gagal mendapatkan data pengguna');
+          },
+          (right) {
+            uid = right.id;
+            rupiah.value = double.parse(right.rupiah);
+            userData = jsonDecode(right.data);
+          },
+        );
       });
     } else {
       Get.back();
@@ -67,27 +76,23 @@ class TransactionGetx extends GetxController {
   }
 
   Future<void> onGetData() async {
-    dio.Response respose = await dio.Dio().get(
-      'https://api.coingecko.com/api/v3/simple/price?vs_currencies=idr&ids=${aset.id}',
-      options: dio.Options(
-        headers: {
-          'x-cg-demo-api-key': await f.secureRead(key: MainConfig.stringApiKey),
+    await dioUsecase.getAsetPrice(id: aset.id).then((value) {
+      value.fold(
+        (left) {
+          currentPrice.value = 0;
+          f.onShowSnackbar(title: 'Terjadi masalah', message: 'Gagal mendapatkan data harga aset');
         },
-      ),
-    );
-    Map<String, dynamic> responseData = respose.data;
-    num price = responseData[aset.id]['idr'];
-    currentPrice.value = price.toDouble();
+        (right) {
+          currentPrice.value = right.toDouble();
+        },
+      );
+    });
 
     isDone.value = true;
 
     int index = userData.indexWhere((item) => item['id'] == aset.id);
     if (index == -1) return;
-    myCoin.value = f.getPrice(
-      oldPrice: userData[index]['price'],
-      totalAset: userData[index]['aset'],
-      newPrice: currentPrice.value,
-    );
+    myCoin.value = f.getPrice(oldPrice: userData[index]['price'], totalAset: userData[index]['aset'], newPrice: currentPrice.value);
   }
 
   Future<void> onGetDataEveryMinute() async {
@@ -102,17 +107,18 @@ class TransactionGetx extends GetxController {
   }
 
   Future<void> onGetChart() async {
-    dio.Response chartResponse = await dio.Dio().get(
-      'https://api.coingecko.com/api/v3/coins/${aset.id}/market_chart?vs_currency=idr&days=7&interval=daily',
-      options: dio.Options(
-        headers: {
-          'x-cg-demo-api-key': await f.secureRead(key: MainConfig.stringApiKey),
-        },
-      ),
-    );
+    List rawData = [];
 
-    Map<String, dynamic> responseDataChart = chartResponse.data;
-    List rawData = responseDataChart['prices'];
+    await dioUsecase.getAsetChart(id: aset.id).then((value) {
+      value.fold(
+        (left) {
+          f.onShowSnackbar(title: 'Terjadi masalah', message: 'Gagal mendapatkan data chart aset');
+        },
+        (right) {
+          rawData = right;
+        },
+      );
+    });
 
     for (List i in rawData) {
       chartData.add(i[1]);
@@ -155,43 +161,32 @@ class TransactionGetx extends GetxController {
 
     if (index != -1) {
       Map<String, dynamic> item = userData[index];
-      userData[index] = DataModel(
-        id: id,
-        price: item['price'],
-        aset: item['aset'] + asetBaru,
-        image: aset.image,
-        name: aset.name,
-      ).toMap();
+      userData[index] = DataModel(id: id, price: item['price'], aset: item['aset'] + asetBaru, image: aset.image, name: aset.name).toArray();
     } else {
-      userData.add(
-        DataModel(
-          id: id,
-          price: currentPrice.value,
-          aset: asetBaru,
-          image: aset.image,
-          name: aset.name,
-        ).toMap(),
-      );
+      userData.add(DataModel(id: id, price: currentPrice.value, aset: asetBaru, image: aset.image, name: aset.name).toArray());
     }
 
-    String uid = await f.secureRead(key: MainConfig.stringID);
     String sisaSaldo = (rupiah.value - inputHarga).toString();
 
-    Map<String, String> newData = {
-      'data': jsonEncode(userData),
-      'rupiah': sisaSaldo,
-    };
+    Map<String, String> newData = {'data': jsonEncode(userData), 'rupiah': sisaSaldo};
 
-    await usecase.updateUserData(uid: uid, data: newData).then((value) {
-      value.fold((left) {}, (right) {});
+    await firebaseUsecase.updateUserData(uid: uid, data: newData).then((value) {
+      f.onEndLoading();
+
+      value.fold(
+        (left) {
+          Get.back();
+          f.onShowSnackbar(title: 'Terjadi masalah', message: 'Gagal membeli aset');
+        },
+        (right) {
+          Get.back();
+          f.onShowSnackbar(
+            title: 'Transaksi Berhasil!',
+            message: 'Membeli ${f.numFormat(asetBaru, symbol: 'Rp')} $id',
+          );
+        },
+      );
     });
-
-    f.onEndLoading();
-    Get.back();
-    f.onShowSnackbar(
-      title: 'Transaksi Berhasil!',
-      message: 'Membeli ${f.numFormat(asetBaru, symbol: 'Rp')} $id',
-    );
   }
 
   void onJual() async {
@@ -206,33 +201,31 @@ class TransactionGetx extends GetxController {
     if (sisaAset < 100) {
       userData.removeAt(index);
     } else {
-      userData[index] = DataModel(
-        id: aset.id,
-        price: currentPrice.value,
-        aset: f.doubleD(sisaAset),
-        image: aset.image,
-        name: aset.name,
-      ).toMap();
+      userData[index] = DataModel(id: aset.id, price: currentPrice.value, aset: f.doubleD(sisaAset), image: aset.image, name: aset.name).toArray();
     }
 
     rupiah.value = f.doubleD(rupiah.value + finalPrice.value);
     String stringData = jsonEncode(userData);
-    String uid = await f.secureRead(key: MainConfig.stringID);
-    Map<String, String> newData = {
-      'data': stringData,
-      'rupiah': '${rupiah.value}',
-    };
 
-    await usecase.updateUserData(uid: uid, data: newData).then((value) {
-      value.fold((left) {}, (right) {});
+    Map<String, String> newData = {'data': stringData, 'rupiah': '${rupiah.value}'};
+
+    await firebaseUsecase.updateUserData(uid: uid, data: newData).then((value) {
+      f.onEndLoading();
+
+      value.fold(
+        (left) {
+          Get.back();
+          f.onShowSnackbar(title: 'Terjadi masalah', message: 'Gagal menjual aset');
+        },
+        (right) {
+          Get.back();
+          f.onShowSnackbar(
+            title: 'Transaksi Berhasil!',
+            message: 'Menjual ${f.numFormat(inputHarga, symbol: 'Rp')} ${aset.id}',
+          );
+        },
+      );
     });
-
-    f.onEndLoading();
-    Get.back();
-    f.onShowSnackbar(
-      title: 'Transaksi Berhasil!',
-      message: 'Menjual ${f.numFormat(inputHarga, symbol: 'Rp')} ${aset.id}',
-    );
   }
 
   void onViewTransaction({required bool isBuy}) {
@@ -249,26 +242,16 @@ class TransactionGetx extends GetxController {
               children: [
                 Row(
                   children: [
-                    IconButton(
-                      onPressed: Get.back,
-                      icon: Icon(Icons.arrow_back),
-                    ),
+                    IconButton(onPressed: Get.back, icon: Icon(Icons.arrow_back)),
                     w.gap(width: 5),
-                    w.text(
-                      data: '${isBuy ? 'Pembelian' : 'Penjualan'} ${aset.name}',
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
+                    w.text(data: '${isBuy ? 'Pembelian' : 'Penjualan'} ${aset.name}', fontWeight: FontWeight.bold, fontSize: 16),
                   ],
                 ),
                 Spacer(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    w.text(
-                      data: 'Nilai ${aset.name}',
-                      fontWeight: FontWeight.bold,
-                    ),
+                    w.text(data: 'Nilai ${aset.name}', fontWeight: FontWeight.bold),
                     w.text(
                       data: f.numFormat(currentPrice.value, symbol: 'Rp'),
                       fontWeight: FontWeight.bold,
@@ -277,23 +260,14 @@ class TransactionGetx extends GetxController {
                 ),
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: Obx(
-                    () => w.text(
-                      data: 'diupdate dalam (${resetIn.value})',
-                      fontSize: 12,
-                    ),
-                  ),
+                  child: Obx(() => w.text(data: 'diupdate dalam (${resetIn.value})', fontSize: 12)),
                 ),
                 w.gap(height: 16),
                 w.field(
                   controller: controller,
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  label: w.text(
-                    data: 'Nilai Transaksi',
-                    fontSize: 12,
-                    color: Colors.black,
-                  ),
+                  label: w.text(data: 'Nilai Transaksi', fontSize: 12, color: Colors.black),
                   onChanged: onChanged,
                   validator: onValidatorTransaction,
                 ),
@@ -302,21 +276,14 @@ class TransactionGetx extends GetxController {
                   alignment: Alignment.centerLeft,
                   child: Visibility(
                     visible: isBuy,
-                    child: w.text(
-                      data: 'Saldo Rupiah Anda ${f.numFormat(rupiah.value)}',
-                      fontSize: 12,
-                    ),
+                    child: w.text(data: 'Saldo Rupiah Anda ${f.numFormat(rupiah.value)}', fontSize: 12),
                   ),
                 ),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Visibility(
                     visible: !isBuy,
-                    child: w.text(
-                      data:
-                          'Saldo ${aset.name} Anda ${f.numFormat(myCoin.value, symbol: 'Rp')}',
-                      fontSize: 12,
-                    ),
+                    child: w.text(data: 'Saldo ${aset.name} Anda ${f.numFormat(myCoin.value, symbol: 'Rp')}', fontSize: 12),
                   ),
                 ),
                 w.gap(height: 16),
@@ -327,11 +294,7 @@ class TransactionGetx extends GetxController {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          w.text(
-                            data: 'Biaya transaksi (1.25%) :',
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          w.text(data: 'Biaya transaksi (1.25%) :', fontSize: 12, fontWeight: FontWeight.bold),
                           Spacer(),
                           w.text(
                             data: f.numFormat(fee.value, symbol: 'Rp'),
@@ -343,11 +306,7 @@ class TransactionGetx extends GetxController {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          w.text(
-                            data: 'Aset yang anda terima :',
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          w.text(data: 'Aset yang anda terima :', fontSize: 12, fontWeight: FontWeight.bold),
                           Spacer(),
                           w.text(
                             data: f.numFormat(finalPrice.value, symbol: 'Rp'),
@@ -408,11 +367,7 @@ class TransactionGetx extends GetxController {
                       isBuy ? onBeli() : onJual();
                     },
                     backgroundColor: Colors.black,
-                    child: w.text(
-                      data: isBuy ? 'Beli' : 'Jual',
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                    child: w.text(data: isBuy ? 'Beli' : 'Jual', fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                 ),
               ],

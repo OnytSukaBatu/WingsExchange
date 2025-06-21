@@ -14,4 +14,8 @@ class DioUsecase {
   Future<Either<MsgFailure, num>> getAsetPrice({required String id}) {
     return repository.getAsetPrice(id: id);
   }
+
+  Future<Either<MsgFailure, List>> getAsetChart({required String id, int days = 7}) {
+    return repository.getAsetChart(id: id, days: days);
+  }
 }

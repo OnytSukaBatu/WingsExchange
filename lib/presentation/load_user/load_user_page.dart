@@ -12,10 +12,7 @@ class LoadUserPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child: CircularProgressIndicator(
-          color: Colors.black,
-          backgroundColor: Colors.transparent,
-        ),
+        child: CircularProgressIndicator(color: Colors.black, backgroundColor: Colors.transparent),
       ),
     );
   }

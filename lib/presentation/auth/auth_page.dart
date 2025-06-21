@@ -18,11 +18,7 @@ class AuthPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            w.text(
-              data: 'Wings Excahnge',
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-            ),
+            w.text(data: 'Wings Excahnge', fontSize: 32, fontWeight: FontWeight.bold),
             w.text(data: 'transaksi mudah & cepat', fontSize: 12),
             w.gap(height: 16),
             w.button(
@@ -32,11 +28,7 @@ class AuthPage extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  w.text(
-                    data: 'Masuk Dengan Google',
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  w.text(data: 'Masuk Dengan Google', fontSize: 12, fontWeight: FontWeight.bold),
                   w.gap(width: 5),
                   Image.asset(ImagePath.google, scale: 16),
                 ],

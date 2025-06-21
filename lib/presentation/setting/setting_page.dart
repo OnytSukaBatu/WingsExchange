@@ -20,11 +20,7 @@ class SettingPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              w.text(
-                data: 'Profil Pengguna',
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
+              w.text(data: 'Profil Pengguna', fontWeight: FontWeight.bold, fontSize: 16),
               w.gap(height: 5),
               Container(
                 padding: EdgeInsets.all(8),
@@ -38,12 +34,7 @@ class SettingPage extends StatelessWidget {
                   physics: NeverScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
                     List data = getx.menuProfil[index];
-                    return widgetMenu(
-                      data: data[0],
-                      icon: data[1],
-                      onTap: data[2],
-                      value: data[3],
-                    );
+                    return widgetMenu(data: data[0], icon: data[1], onTap: data[2], value: data[3]);
                   },
                   separatorBuilder: (context, index) {
                     return Divider(color: Colors.black, height: 1);
@@ -52,11 +43,7 @@ class SettingPage extends StatelessWidget {
                 ),
               ),
               w.gap(height: 16),
-              w.text(
-                data: 'Menu Umum',
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              w.text(data: 'Menu Umum', fontSize: 16, fontWeight: FontWeight.bold),
               w.gap(height: 5),
               Container(
                 padding: EdgeInsets.all(8),
@@ -71,12 +58,7 @@ class SettingPage extends StatelessWidget {
                     physics: NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) {
                       List data = getx.menuUmum[index];
-                      return widgetMenu(
-                        data: data[0],
-                        icon: data[1],
-                        onTap: data[2],
-                        value: data[3],
-                      );
+                      return widgetMenu(data: data[0], icon: data[1], onTap: data[2], value: data[3]);
                     },
                     separatorBuilder: (context, index) {
                       return Divider(color: Colors.black, height: 1);
@@ -93,12 +75,7 @@ class SettingPage extends StatelessWidget {
   }
 }
 
-Widget widgetMenu({
-  required String data,
-  required IconData? icon,
-  Function()? onTap,
-  String? value,
-}) {
+Widget widgetMenu({required String data, required IconData? icon, Function()? onTap, String? value}) {
   return Material(
     color: Colors.transparent,
     child: InkWell(
@@ -115,11 +92,7 @@ Widget widgetMenu({
               child: Row(
                 children: [
                   w.gap(width: 5),
-                  w.text(
-                    data: value ?? '',
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  w.text(data: value ?? '', fontSize: 12, fontWeight: FontWeight.bold),
                 ],
               ),
             ),

@@ -7,9 +7,9 @@ import 'package:wings/presentation/wallet/wallet_getx.dart';
 import 'package:wings/presentation/wallet/wallet_page.dart';
 
 class DashboardGetx extends GetxController {
-  RxInt index = 0.obs;
   PageController controller = PageController();
   List<Widget> page = <Widget>[HomePage(), SettingPage(), WalletPage()];
+  RxInt index = 0.obs;
 
   @override
   void onClose() {

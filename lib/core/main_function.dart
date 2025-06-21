@@ -29,11 +29,7 @@ class MainFunction with FuncGetStorage, FuncSecureStorage {
     );
   }
 
-  Future onShowDialog({
-    required Widget child,
-    Color? backgroundColor,
-    BorderRadiusGeometry? borderRadius,
-  }) async {
+  Future onShowDialog({required Widget child, Color? backgroundColor, BorderRadiusGeometry? borderRadius}) async {
     backgroundColor ??= Colors.white;
     borderRadius ??= BorderRadius.circular(16);
 
@@ -57,10 +53,7 @@ class MainFunction with FuncGetStorage, FuncSecureStorage {
           w.gap(height: 16),
           SizedBox(
             width: 160,
-            child: LinearProgressIndicator(
-              backgroundColor: Colors.grey,
-              color: Colors.black,
-            ),
+            child: LinearProgressIndicator(backgroundColor: Colors.grey, color: Colors.black),
           ),
           w.gap(height: 32),
         ],
@@ -72,29 +65,8 @@ class MainFunction with FuncGetStorage, FuncSecureStorage {
     Get.back();
   }
 
-  // Future<void> onGetUserData() async {
-  //   QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-  //       .collection('main-user')
-  //       .where('email', isEqualTo: f.boxRead(key: MainConfig.stringEmail))
-  //       .limit(1)
-  //       .get();
-
-  //   Object? object = querySnapshot.docs.first.data();
-  //   Map<String, dynamic> data = object as Map<String, dynamic>;
-
-  //   String transaction = data['data'];
-  //   String rupiah = data['rupiah'];
-
-  //   await f.boxWrite(key: MainConfig.stringTransaction, value: transaction);
-  //   await f.boxWrite(key: MainConfig.stringRupiah, value: rupiah);
-  // }
-
   String numFormat(num number, {String? symbol}) {
-    NumberFormat formatter = NumberFormat.currency(
-      locale: 'id_ID',
-      symbol: symbol ?? '',
-      decimalDigits: 2,
-    );
+    NumberFormat formatter = NumberFormat.currency(locale: 'id_ID', symbol: symbol ?? '', decimalDigits: 2);
     return formatter.format(number);
   }
 
@@ -125,18 +97,9 @@ class MainFunction with FuncGetStorage, FuncSecureStorage {
       borderRadius: borderRadius,
       borderWidth: borderWidth,
       duration: duration,
-      messageText: w.text(
-        data: message,
-        fontSize: 10,
-        textAlign: TextAlign.left,
-      ),
+      messageText: w.text(data: message, fontSize: 10, textAlign: TextAlign.left),
       margin: EdgeInsets.all(8),
-      titleText: w.text(
-        data: title,
-        fontSize: 12,
-        fontWeight: FontWeight.bold,
-        textAlign: TextAlign.left,
-      ),
+      titleText: w.text(data: title, fontSize: 12, fontWeight: FontWeight.bold, textAlign: TextAlign.left),
       padding: padding,
     );
   }
@@ -145,11 +108,7 @@ class MainFunction with FuncGetStorage, FuncSecureStorage {
     return double.parse(price.toStringAsFixed(2));
   }
 
-  double getPrice({
-    required double oldPrice,
-    required double totalAset,
-    required double newPrice,
-  }) {
+  double getPrice({required double oldPrice, required double totalAset, required double newPrice}) {
     double diff = ((newPrice - oldPrice) / oldPrice) * 100;
     double percent = 1 + (diff / 100);
     return totalAset * percent;
@@ -179,9 +138,7 @@ mixin FuncGetStorage {
 }
 
 mixin FuncSecureStorage {
-  FlutterSecureStorage storage = FlutterSecureStorage(
-    aOptions: const AndroidOptions(encryptedSharedPreferences: true),
-  );
+  FlutterSecureStorage storage = FlutterSecureStorage(aOptions: const AndroidOptions(encryptedSharedPreferences: true));
 
   Future<void> secureWrite({required String key, required String value}) async {
     await storage.write(key: key, value: value);

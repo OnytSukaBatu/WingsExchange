@@ -13,11 +13,7 @@ class DashboardPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: PageView(
-          children: getx.page,
-          controller: getx.controller,
-          onPageChanged: getx.onPageChanged,
-        ),
+        child: PageView(children: getx.page, controller: getx.controller, onPageChanged: getx.onPageChanged),
       ),
 
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -33,26 +29,14 @@ class DashboardPage extends StatelessWidget {
               currentIndex: getx.index.value,
               onTap: getx.onTap,
               items: [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: 'Beranda',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.settings),
-                  label: 'Pengaturan',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.wallet),
-                  label: 'Dompet',
-                ),
+                BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Beranda'),
+                BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Pengaturan'),
+                BottomNavigationBarItem(icon: Icon(Icons.wallet), label: 'Dompet'),
               ],
               backgroundColor: Colors.black,
               selectedItemColor: Colors.white,
               unselectedItemColor: Colors.grey,
-              selectedLabelStyle: GoogleFonts.poppins(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-              ),
+              selectedLabelStyle: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.bold),
               unselectedLabelStyle: GoogleFonts.poppins(fontSize: 10),
               selectedIconTheme: IconThemeData(color: Colors.white, size: 20),
               unselectedIconTheme: IconThemeData(color: Colors.grey, size: 16),

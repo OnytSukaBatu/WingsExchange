@@ -23,11 +23,7 @@ class HomePage extends StatelessWidget {
         title: Row(
           children: [
             Image.asset(ImagePath.icon_dark, scale: 16),
-            w.text(
-              data: 'Wings',
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
+            w.text(data: 'Wings', color: Colors.white, fontWeight: FontWeight.bold),
           ],
         ),
       ),
@@ -46,11 +42,7 @@ class HomePage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        w.text(
-                          data: 'Nilai Total Aset',
-                          fontSize: 14,
-                          color: Colors.white,
-                        ),
+                        w.text(data: 'Nilai Total Aset', fontSize: 14, color: Colors.white),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -59,14 +51,7 @@ class HomePage extends StatelessWidget {
                               color: Colors.transparent,
                               child: InkWell(
                                 onTap: getx.onShowAset,
-                                child: Obx(
-                                  () => Icon(
-                                    getx.showAset.value
-                                        ? Icons.visibility
-                                        : Icons.visibility_off,
-                                    color: Colors.white,
-                                  ),
-                                ),
+                                child: Obx(() => Icon(getx.showAset.value ? Icons.visibility : Icons.visibility_off, color: Colors.white)),
                               ),
                             ),
                           ],
@@ -129,10 +114,7 @@ class HomePage extends StatelessWidget {
                     padding: EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(16),
-                        topRight: Radius.circular(16),
-                      ),
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
                     ),
                     child: Column(
                       children: [
@@ -142,11 +124,7 @@ class HomePage extends StatelessWidget {
                         //   suffix: Icon(Icons.search, size: 16),
                         // ),
                         // w.gap(height: 16),
-                        Obx(
-                          () => getx.isMarketDataLoading.value
-                              ? widgetListMarketLoading()
-                              : widgetListMarket(),
-                        ),
+                        Obx(() => getx.isMarketDataLoading.value ? widgetListMarketLoading() : widgetListMarket()),
                         w.gap(height: 64),
                       ],
                     ),
@@ -181,16 +159,9 @@ class HomePage extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 32),
       child: Column(
         children: [
-          CircularProgressIndicator(
-            color: Colors.black,
-            backgroundColor: Colors.transparent,
-          ),
+          CircularProgressIndicator(color: Colors.black, backgroundColor: Colors.transparent),
           w.gap(height: 16),
-          w.text(
-            data: 'Mengambil Data',
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-          ),
+          w.text(data: 'Mengambil Data', fontSize: 12, fontWeight: FontWeight.bold),
         ],
       ),
     );
@@ -218,20 +189,14 @@ class HomePage extends StatelessWidget {
                   children: [
                     SizedBox(
                       width: 32,
-                      child: ClipOval(
-                        child: CachedNetworkImage(imageUrl: aset.image),
-                      ),
+                      child: ClipOval(child: CachedNetworkImage(imageUrl: aset.image)),
                     ),
                     w.gap(width: 8),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          w.text(
-                            data: aset.name,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          w.text(data: aset.name, fontSize: 12, fontWeight: FontWeight.bold),
                           w.text(data: aset.id, fontSize: 10),
                         ],
                       ),
@@ -245,13 +210,7 @@ class HomePage extends StatelessWidget {
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
                           ),
-                          w.text(
-                            data: '${f.numFormat(aset.percent)}%',
-                            color: aset.percent >= 0
-                                ? Colors.green
-                                : Colors.red,
-                            fontSize: 10,
-                          ),
+                          w.text(data: '${f.numFormat(aset.percent)}%', color: aset.percent >= 0 ? Colors.green : Colors.red, fontSize: 10),
                         ],
                       ),
                     ),
