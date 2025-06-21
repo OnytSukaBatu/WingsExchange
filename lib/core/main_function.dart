@@ -12,6 +12,7 @@ class MainFunction with FuncGetStorage, FuncSecureStorage {
     Color? backgroundColor,
     bool? isDismissible,
     BorderRadiusGeometry? borderRadius,
+    double? height,
   }) async {
     padding ??= EdgeInsets.all(16);
     backgroundColor ??= Colors.white;
@@ -20,7 +21,7 @@ class MainFunction with FuncGetStorage, FuncSecureStorage {
 
     return await Get.bottomSheet(
       SafeArea(
-        child: Padding(padding: padding, child: child),
+        child: Container(height: height ?? Get.height * 0.9, width: Get.width, padding: padding, child: child),
       ),
       backgroundColor: backgroundColor,
       isDismissible: isDismissible,

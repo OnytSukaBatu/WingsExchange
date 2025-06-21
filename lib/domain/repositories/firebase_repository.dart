@@ -8,7 +8,7 @@ abstract class FirebaseRepository {
 
   Future<Either<MsgFailure, UserEntity>> getUserData({required String email});
 
-  Future<Either<MsgFailure, String>> getApiKey();
+  Future<Either<MsgFailure, String>> getApiKey({String? field});
 
   Future<Either<MsgFailure, String>> saveUserData({required UserModel model});
 }

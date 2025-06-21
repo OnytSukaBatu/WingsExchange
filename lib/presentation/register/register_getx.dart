@@ -16,10 +16,13 @@ class RegisterGetx extends GetxController {
   TextEditingController controller = TextEditingController();
   RxBool snk = false.obs;
 
+  RxString snkValue = ''.obs;
+
   @override
   void onInit() {
     super.onInit();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await onGetSNK();
       controller.text = getDisplay();
     });
   }
@@ -30,24 +33,26 @@ class RegisterGetx extends GetxController {
 
   void onShowSNK() {
     f.onShowBottomSheet(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          w.text(data: 'Syarat dan Ketentuan'),
-          w.gap(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: w.button(
-              onPressed: () {
-                Get.back();
-                snk.value = true;
-              },
-              backgroundColor: Colors.white,
-              borderColor: Colors.black,
-              child: w.text(data: 'Saya menyetujui Syarat dan Ketentuan yang berlaku', fontSize: 12),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            w.text(data: snkValue.value),
+            w.gap(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: w.button(
+                onPressed: () {
+                  Get.back();
+                  snk.value = true;
+                },
+                backgroundColor: Colors.white,
+                borderColor: Colors.black,
+                child: w.text(data: 'Saya menyetujui Syarat dan Ketentuan yang berlaku', fontSize: 12),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -115,5 +120,21 @@ class RegisterGetx extends GetxController {
     if (value.length < 5) return 'Panjang minimal 5 huruf/angka';
     if (value.contains(' ')) return 'Tidak boleh ada spasi!';
     return null;
+  }
+
+  Future<void> onGetSNK() async {
+    f.onShowLoading();
+    await usecase.getApiKey(field: 'snk').then((value) {
+      f.onEndLoading();
+
+      value.fold(
+        (left) {
+          f.onShowSnackbar(title: 'Terjadi Masalah', message: 'Gagal mendapatkan data syarat & ketentuan');
+        },
+        (right) {
+          snkValue.value = right;
+        },
+      );
+    });
   }
 }

@@ -16,8 +16,8 @@ class FirebaseUsecase {
     return repository.getUserData(email: email);
   }
 
-  Future<Either<MsgFailure, String>> getApiKey() {
-    return repository.getApiKey();
+  Future<Either<MsgFailure, String>> getApiKey({String? field}) {
+    return repository.getApiKey(field: field);
   }
 
   Future<Either<MsgFailure, String>> saveUserData({required UserModel model}) {

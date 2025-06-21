@@ -22,11 +22,11 @@ class FirebaseRemoteDataSource {
     return UserModel.fromArray(array);
   }
 
-  Future<String> getApiKey() async {
+  Future<String> getApiKey({String? field}) async {
     DocumentSnapshot<Map<String, dynamic>> snapshot = await firestore.collection('main-config').doc('main').get();
 
     Map<String, dynamic>? data = snapshot.data();
-    return data?['api-key'];
+    return data?[field ?? 'api-key'];
   }
 
   Future<String> saveUserData({required UserModel model}) async {

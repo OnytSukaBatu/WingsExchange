@@ -28,9 +28,9 @@ class FirebaseRepositoryImpl implements FirebaseRepository {
   }
 
   @override
-  Future<Either<MsgFailure, String>> getApiKey() async {
+  Future<Either<MsgFailure, String>> getApiKey({String? field}) async {
     try {
-      return Right(await remote.getApiKey());
+      return Right(await remote.getApiKey(field: field));
     } catch (e) {
       return Left(MsgFailure('Gagal mengambil data'));
     }
