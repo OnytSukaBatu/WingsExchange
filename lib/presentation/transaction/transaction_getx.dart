@@ -198,7 +198,7 @@ class TransactionGetx extends GetxController {
     int index = userData.indexWhere((item) => item['id'] == aset.id);
     double sisaAset = myCoin.value - inputHarga;
 
-    if (sisaAset < 100) {
+    if (sisaAset < 1) {
       userData.removeAt(index);
     } else {
       userData[index] = DataModel(id: aset.id, price: currentPrice.value, aset: f.doubleD(sisaAset), image: aset.image, name: aset.name).toArray();
@@ -326,7 +326,7 @@ class TransactionGetx extends GetxController {
                     children: [
                       w.button(
                         onPressed: () {
-                          onPressPrecentage(percent: .25, isBuy: isBuy);
+                          onPressPercentage(percent: .25, isBuy: isBuy);
                         },
                         backgroundColor: Colors.white,
                         borderColor: Colors.black,
@@ -334,7 +334,7 @@ class TransactionGetx extends GetxController {
                       ),
                       w.button(
                         onPressed: () {
-                          onPressPrecentage(percent: .5, isBuy: isBuy);
+                          onPressPercentage(percent: .5, isBuy: isBuy);
                         },
                         backgroundColor: Colors.white,
                         borderColor: Colors.black,
@@ -342,7 +342,7 @@ class TransactionGetx extends GetxController {
                       ),
                       w.button(
                         onPressed: () {
-                          onPressPrecentage(percent: .75, isBuy: isBuy);
+                          onPressPercentage(percent: .75, isBuy: isBuy);
                         },
                         backgroundColor: Colors.white,
                         borderColor: Colors.black,
@@ -350,7 +350,7 @@ class TransactionGetx extends GetxController {
                       ),
                       w.button(
                         onPressed: () {
-                          onPressPrecentage(percent: 1, isBuy: isBuy);
+                          onPressPercentage(percent: 1, isBuy: isBuy);
                         },
                         backgroundColor: Colors.white,
                         borderColor: Colors.black,
@@ -378,9 +378,9 @@ class TransactionGetx extends GetxController {
     );
   }
 
-  void onPressPrecentage({required double percent, required bool isBuy}) {
+  void onPressPercentage({required double percent, required bool isBuy}) {
     double value = (isBuy ? rupiah.value : myCoin.value) * percent;
-    controller.text = value.toStringAsFixed(0);
+    controller.text = value.toInt().toString();
     onChanged(controller.text);
   }
 }
