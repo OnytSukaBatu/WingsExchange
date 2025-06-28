@@ -2,7 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:wings/core/main_function.dart';
+import 'package:wings/core/main_image_path.dart';
 import 'package:wings/core/main_widget.dart';
 import 'package:wings/presentation/transaction/transaction_getx.dart';
 
@@ -22,8 +24,21 @@ class TransactionPage extends StatelessWidget {
       ),
       body: SafeArea(
         child: Obx(
-          () => getx.isDone.value
-              ? Padding(
+          () => getx.isLoading.value
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      w.text(data: 'Memuat data..'),
+                      w.gap(height: 8),
+                      SizedBox(
+                        width: 160,
+                        child: LinearProgressIndicator(color: Colors.black, backgroundColor: Colors.grey),
+                      ),
+                    ],
+                  ),
+                )
+              : Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
@@ -46,7 +61,7 @@ class TransactionPage extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               w.text(data: 'Nilai ${getx.aset.name}', fontSize: 16, fontWeight: FontWeight.bold),
-                              Obx(() => w.text(data: f.numFormat(getx.currentPrice.value, symbol: 'Rp'), fontSize: 12)),
+                              Obx(() => w.text(data: f.numFormat(getx.currentAsetPrice.value, symbol: 'Rp'), fontSize: 12)),
                             ],
                           ),
                         ],
@@ -55,46 +70,24 @@ class TransactionPage extends StatelessWidget {
                       Container(
                         height: 160,
                         width: double.infinity,
-                        padding: EdgeInsets.symmetric(vertical: 16),
+                        padding: EdgeInsets.all(8),
+                        margin: EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           border: Border.all(color: Colors.black),
                           borderRadius: BorderRadius.circular(5),
                         ),
-                        child: Obx(
-                          () => LineChart(
-                            curve: Curves.easeOutQuart,
-                            duration: const Duration(seconds: 2),
-                            LineChartData(
-                              titlesData: FlTitlesData(show: false),
-                              borderData: FlBorderData(show: false),
-                              gridData: FlGridData(show: false),
-                              lineBarsData: [
-                                LineChartBarData(
-                                  spots: List.generate(getx.chartData.length, (index) => FlSpot(index.toDouble(), getx.chartData[index])),
-                                  isCurved: false,
-                                  color: Colors.blue,
-                                  barWidth: 1,
-                                  belowBarData: BarAreaData(show: false),
-                                  dotData: FlDotData(show: false),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                        child: widgetChart(),
                       ),
-                      w.gap(height: 5),
+                      w.gap(height: 8),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          w.text(data: 'Weekly Chart ${getx.aset.name} by'),
-                          w.gap(width: 2),
-                          w.text(data: 'Coingecko', fontWeight: FontWeight.bold),
+                          w.text(data: 'Harga ${getx.aset.name} 30 hari terkahir'),
+                          SizedBox(height: 18, child: Image.asset(ImagePath.coinGecko_dark)),
                         ],
                       ),
                     ],
                   ),
-                )
-              : Center(
-                  child: CircularProgressIndicator(color: Colors.black, backgroundColor: Colors.transparent),
                 ),
         ),
       ),
@@ -106,7 +99,7 @@ class TransactionPage extends StatelessWidget {
               children: [
                 Expanded(
                   child: w.button(
-                    onPressed: getx.isDone.value ? () => getx.onViewTransaction(isBuy: true) : null,
+                    onPressed: getx.isLoading.value ? null : () => getx.onViewTransaction(isBuy: true),
                     backgroundColor: Colors.green,
                     borderColor: Colors.black,
                     child: w.text(data: 'Beli', color: Colors.white, fontWeight: FontWeight.bold),
@@ -115,7 +108,7 @@ class TransactionPage extends StatelessWidget {
                 w.gap(width: 16),
                 Expanded(
                   child: w.button(
-                    onPressed: getx.isDone.value ? () => getx.onViewTransaction(isBuy: false) : null,
+                    onPressed: getx.isLoading.value ? null : () => getx.onViewTransaction(isBuy: false),
                     backgroundColor: Colors.red,
                     borderColor: Colors.black,
                     child: w.text(data: 'jual', color: Colors.white, fontWeight: FontWeight.bold),
@@ -127,5 +120,56 @@ class TransactionPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget widgetChart() {
+    return Obx(
+      () => LineChart(
+        LineChartData(
+          titlesData: FlTitlesData(show: false),
+          borderData: FlBorderData(show: false),
+          gridData: FlGridData(show: false),
+          lineBarsData: [
+            LineChartBarData(
+              spots: List.generate(getx.chartData.length, (index) => FlSpot(index.toDouble(), getx.chartData[index])),
+              isCurved: true,
+              color: Colors.blue,
+              barWidth: 1,
+              belowBarData: BarAreaData(show: false),
+              dotData: FlDotData(show: false),
+            ),
+          ],
+          lineTouchData: LineTouchData(touchTooltipData: toolTipData(), getTouchedSpotIndicator: spotIndicator),
+        ),
+      ),
+    );
+  }
+
+  LineTouchTooltipData toolTipData() {
+    return LineTouchTooltipData(
+      getTooltipColor: (_) => Colors.black,
+      tooltipPadding: EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+      tooltipBorderRadius: BorderRadius.circular(5),
+      getTooltipItems: (List<LineBarSpot> listSpot) {
+        return listSpot.map((LineBarSpot spot) {
+          TextStyle style = GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white);
+          return LineTooltipItem(f.numFormat(spot.y), style);
+        }).toList();
+      },
+    );
+  }
+
+  List<TouchedSpotIndicatorData> spotIndicator(LineChartBarData barData, List<int> indicators) {
+    return indicators.map((index) {
+      return TouchedSpotIndicatorData(
+        FlLine(color: Colors.transparent),
+        FlDotData(
+          show: true,
+          getDotPainter: (p0, p1, p2, p3) {
+            return FlDotCirclePainter(color: Colors.blue, radius: 5);
+          },
+        ),
+      );
+    }).toList();
   }
 }

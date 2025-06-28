@@ -13,11 +13,9 @@ class HomeGetx extends GetxController {
   FirebaseUsecase firebaseUsecase = injection<FirebaseUsecase>();
   DioUsecase dioUsecase = injection<DioUsecase>();
 
-  TextEditingController controller = TextEditingController();
-
-  RxDouble asetValue = 0.0.obs;
-  RxBool showAset = false.obs;
-  RxList<AsetEntity> listMarket = <AsetEntity>[].obs;
+  RxDouble userAset = 0.0.obs;
+  RxBool showUserAset = false.obs;
+  RxList<AsetEntity> listAsetMarket = <AsetEntity>[].obs;
 
   RxBool isUserDataLoading = true.obs;
   RxBool isMarketDataLoading = true.obs;
@@ -32,7 +30,7 @@ class HomeGetx extends GetxController {
   }
 
   void onShowAset() {
-    showAset.value = !showAset.value;
+    showUserAset.value = !showUserAset.value;
   }
 
   Future<void> onRefresh() async {
@@ -47,7 +45,7 @@ class HomeGetx extends GetxController {
           f.onShowSnackbar(title: 'Terjadi masalah', message: 'Gagal mendapatkan data market');
         },
         (right) {
-          listMarket.value = right;
+          listAsetMarket.value = right;
         },
       );
     });
@@ -91,7 +89,7 @@ class HomeGetx extends GetxController {
       priceData.add(f.getPrice(oldPrice: i['price'], totalAset: i['aset'], newPrice: currentPrice?.toDouble() ?? 0));
     }
 
-    asetValue.value = priceData.reduce((a, b) => a + b).toDouble();
+    userAset.value = priceData.reduce((a, b) => a + b).toDouble();
     isUserDataLoading.value = false;
   }
 }

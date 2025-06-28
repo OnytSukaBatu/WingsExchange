@@ -20,23 +20,27 @@ class PinGetx extends GetxController {
     });
   }
 
+  PINmethod getMethod() {
+    if (Get.arguments is PINmethod) return Get.arguments;
+    Get.back();
+    return PINmethod.result;
+  }
+
   void onGetMethod() {
-    if (Get.arguments is PINmethod) {
-      method = Get.arguments;
-      if (method == PINmethod.result) message.value = 'Masukan PIN Anda';
-      if (method == PINmethod.create) message.value = 'Buat PIN Baru';
-      if (method == PINmethod.secure) message.value = 'Masukan PIN Anda';
-    } else {
-      Get.back();
-    }
+    method = getMethod();
+    if (method == PINmethod.result) message.value = 'Masukan PIN Anda';
+    if (method == PINmethod.create) message.value = 'Buat PIN Baru';
+    if (method == PINmethod.secure) message.value = 'Masukan PIN Anda';
+    if (method == PINmethod.confirm) message.value = 'Masukan PIN Anda';
   }
 
   void onTap(String num) {
     value.value += num;
-    if (value.value.length < 6) return;
+    if (value.value.length != 6) return;
     if (method == PINmethod.result) Get.back(result: value.value);
     if (method == PINmethod.create) onCreate();
     if (method == PINmethod.secure) onSecure();
+    if (method == PINmethod.confirm) onConfirm();
   }
 
   void onBack() {
@@ -83,6 +87,33 @@ class PinGetx extends GetxController {
     f.onEndLoading();
 
     if (value.value == realValue) return Get.offAll(() => DashboardPage());
+    value.value = '';
+
+    f.onShowDialog(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          w.gap(height: 16),
+          w.text(data: 'PIN salah'),
+          w.gap(height: 5),
+          w.button(
+            onPressed: Get.back,
+            backgroundColor: Colors.white,
+            borderColor: Colors.black,
+            child: w.text(data: 'Mengerti'),
+          ),
+          w.gap(height: 16),
+        ],
+      ),
+    );
+  }
+
+  void onConfirm() async {
+    f.onShowLoading();
+    String realValue = await f.secureRead(key: MainConfig.stringPIN);
+    f.onEndLoading();
+
+    if (value.value == realValue) return Get.back(result: true);
     value.value = '';
 
     f.onShowDialog(

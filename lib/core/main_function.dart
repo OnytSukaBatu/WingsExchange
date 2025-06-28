@@ -21,7 +21,7 @@ class MainFunction with FuncGetStorage, FuncSecureStorage {
 
     return await Get.bottomSheet(
       SafeArea(
-        child: Container(height: height ?? Get.height * 0.9, width: Get.width, padding: padding, child: child),
+        child: Container(height: height ?? Get.height, width: Get.width, padding: padding, child: child),
       ),
       backgroundColor: backgroundColor,
       isDismissible: isDismissible,

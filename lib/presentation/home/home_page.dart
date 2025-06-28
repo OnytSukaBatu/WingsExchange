@@ -51,7 +51,7 @@ class HomePage extends StatelessWidget {
                               color: Colors.transparent,
                               child: InkWell(
                                 onTap: getx.onShowAset,
-                                child: Obx(() => Icon(getx.showAset.value ? Icons.visibility : Icons.visibility_off, color: Colors.white)),
+                                child: Obx(() => Icon(getx.showUserAset.value ? Icons.visibility : Icons.visibility_off, color: Colors.white)),
                               ),
                             ),
                           ],
@@ -141,10 +141,10 @@ class HomePage extends StatelessWidget {
   Widget widgetSaldo() {
     return Obx(
       () => w.text(
-        data: getx.showAset.value
+        data: getx.showUserAset.value
             ? getx.isUserDataLoading.value
                   ? 'Memuat...'
-                  : f.numFormat(getx.asetValue.value, symbol: 'Rp')
+                  : f.numFormat(getx.userAset.value, symbol: 'Rp')
             : 'Rp*****',
         fontSize: 20,
         fontWeight: FontWeight.bold,
@@ -172,9 +172,9 @@ class HomePage extends StatelessWidget {
       () => ListView.separated(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
-        itemCount: getx.listMarket.length,
+        itemCount: getx.listAsetMarket.length,
         itemBuilder: (context, index) {
-          AsetEntity aset = getx.listMarket[index];
+          AsetEntity aset = getx.listAsetMarket[index];
 
           return Material(
             color: Colors.transparent,

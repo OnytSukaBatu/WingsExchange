@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:wings/core/main_config.dart';
 import 'package:wings/core/main_widget.dart';
 import 'package:wings/presentation/pin/pin_getx.dart';
 
@@ -12,6 +13,16 @@ class PinPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        leading: Visibility(
+          visible: Get.arguments == PINmethod.confirm,
+          child: IconButton(
+            onPressed: Get.back,
+            icon: Icon(Icons.arrow_back, color: Colors.black),
+          ),
+        ),
+      ),
       body: SafeArea(
         child: Center(
           child: Padding(

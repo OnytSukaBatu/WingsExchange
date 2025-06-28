@@ -7,10 +7,9 @@ class MainConfig {
 
   static String urlListMarket = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=idr';
   static String urlAsetPrice = 'https://api.coingecko.com/api/v3/simple/price?vs_currencies=idr&ids=';
-
   static String urlChart0 = 'https://api.coingecko.com/api/v3/coins/';
   static String urlChart1 = '/market_chart?vs_currency=idr&days=';
   static String urlChart2 = '&interval=daily';
 }
 
-enum PINmethod { result, create, secure }
+enum PINmethod { result, create, secure, confirm }

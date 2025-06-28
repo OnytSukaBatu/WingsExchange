@@ -47,7 +47,7 @@ class WalletPage extends StatelessWidget {
                             color: Colors.transparent,
                             child: InkWell(
                               onTap: getx.onShowAset,
-                              child: Obx(() => Icon(getx.showAset.value ? Icons.visibility : Icons.visibility_off, color: Colors.white)),
+                              child: Obx(() => Icon(getx.showUserAset.value ? Icons.visibility : Icons.visibility_off, color: Colors.white)),
                             ),
                           ),
                         ],
@@ -74,10 +74,10 @@ class WalletPage extends StatelessWidget {
   Widget widgetAset() {
     return Obx(
       () => w.text(
-        data: getx.showAset.value
+        data: getx.showUserAset.value
             ? getx.isLoading.value
                   ? 'Memuat...'
-                  : f.numFormat(getx.asetValue.value, symbol: 'Rp')
+                  : f.numFormat(getx.userAset.value, symbol: 'Rp')
             : 'Rp*****',
         fontSize: 20,
         fontWeight: FontWeight.bold,
@@ -105,9 +105,9 @@ class WalletPage extends StatelessWidget {
       () => ListView.separated(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
-        itemCount: getx.realData.length,
+        itemCount: getx.realListUserAset.length,
         itemBuilder: (context, index) {
-          DataModel data = getx.realData[index];
+          DataModel data = getx.realListUserAset[index];
           AsetEntity asetData = AsetEntity(id: data.id, symbol: '', name: data.name, image: data.image, currentPrice: 0, percent: 0);
 
           return Material(

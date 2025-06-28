@@ -14,9 +14,9 @@ class WalletGetx extends GetxController {
   DioUsecase dioUsecase = injection<DioUsecase>();
   FirebaseUsecase firebaseUsecase = injection<FirebaseUsecase>();
 
-  RxDouble asetValue = 0.0.obs;
-  RxBool showAset = false.obs;
-  RxList<DataModel> realData = <DataModel>[].obs;
+  RxDouble userAset = 0.0.obs;
+  RxBool showUserAset = false.obs;
+  RxList<DataModel> realListUserAset = <DataModel>[].obs;
 
   RxBool isLoading = true.obs;
 
@@ -29,7 +29,7 @@ class WalletGetx extends GetxController {
   }
 
   void onShowAset() {
-    showAset.value = !showAset.value;
+    showUserAset.value = !showUserAset.value;
   }
 
   Future<void> onGetUserData() async {
@@ -73,8 +73,8 @@ class WalletGetx extends GetxController {
       tempList.add(DataModel(id: temp.id, price: temp.price, aset: absPrice, image: temp.image, name: temp.name));
     }
 
-    realData.value = tempList;
-    asetValue.value = priceData.reduce((a, b) => a + b).toDouble();
+    realListUserAset.value = tempList;
+    userAset.value = priceData.reduce((a, b) => a + b).toDouble();
 
     isLoading.value = false;
   }
