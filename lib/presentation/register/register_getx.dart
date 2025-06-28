@@ -70,21 +70,7 @@ class RegisterGetx extends GetxController {
 
     String? pin = await Get.to(() => PinPage(), arguments: PINmethod.create);
     if (pin == null) {
-      f.onShowDialog(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            w.text(data: 'Gagal mendapatkan PIN silahkan coba lagi'),
-            w.gap(height: 5),
-            w.button(
-              onPressed: Get.back,
-              backgroundColor: Colors.white,
-              borderColor: Colors.black,
-              child: w.text(data: 'Mengerti'),
-            ),
-          ],
-        ),
-      );
+      f.onShowWarn('Gagal mendapatkan PIN silahkan coba lagi');
       return;
     }
 

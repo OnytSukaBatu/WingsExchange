@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:wings/core/main_config.dart';
 import 'package:wings/core/main_widget.dart';
 import 'package:wings/presentation/pin/pin_getx.dart';
+import 'package:wings/presentation/reset/reset_page.dart';
 
 class PinPage extends StatelessWidget {
   PinPage({super.key});
@@ -49,6 +50,16 @@ class PinPage extends StatelessWidget {
                               decoration: BoxDecoration(color: filled ? Colors.black : Colors.grey, shape: BoxShape.circle),
                             );
                           }),
+                        ),
+                      ),
+                      w.gap(height: 32),
+                      Visibility(
+                        visible: Get.arguments != PINmethod.create,
+                        child: InkWell(
+                          onTap: () {
+                            Get.offAll(() => ResetPage());
+                          },
+                          child: w.text(data: 'Lupa PIN?', color: Colors.blue, fontWeight: FontWeight.bold, fontSize: 12),
                         ),
                       ),
                     ],

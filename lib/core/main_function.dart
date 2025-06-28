@@ -114,6 +114,26 @@ class MainFunction with FuncGetStorage, FuncSecureStorage {
     double percent = 1 + (diff / 100);
     return totalAset * percent;
   }
+
+  void onShowWarn(String title) {
+    f.onShowDialog(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          w.gap(height: 16),
+          w.text(data: title),
+          w.gap(height: 5),
+          w.button(
+            onPressed: Get.back,
+            backgroundColor: Colors.white,
+            borderColor: Colors.black,
+            child: w.text(data: 'Mengerti'),
+          ),
+          w.gap(height: 16),
+        ],
+      ),
+    );
+  }
 }
 
 MainFunction get f => MainFunction();

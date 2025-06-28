@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:wings/core/main_config.dart';
 import 'package:wings/core/main_function.dart';
-import 'package:wings/core/main_widget.dart';
 import 'package:wings/domain/entities/user_entity.dart';
 import 'package:wings/domain/usecases/dio_usecase.dart';
 import 'package:wings/domain/usecases/firebase_usecase.dart';
@@ -61,24 +61,11 @@ class LoadUserGetx extends GetxController {
         return Get.offAll(() => DashboardPage());
       }
 
+      f.onShowLoading();
+      await GoogleSignIn().signOut();
+      f.onEndLoading();
       Get.offAll(() => AuthPage());
-      f.onShowDialog(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            w.gap(height: 16),
-            w.text(data: 'Gagal Login!'),
-            w.gap(height: 5),
-            w.button(
-              onPressed: Get.back,
-              backgroundColor: Colors.white,
-              borderColor: Colors.black,
-              child: w.text(data: 'Mengerti'),
-            ),
-            w.gap(height: 16),
-          ],
-        ),
-      );
+      f.onShowWarn('Gagal Login!');
     });
   }
 }

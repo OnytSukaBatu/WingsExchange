@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wings/core/main_config.dart';
 import 'package:wings/core/main_function.dart';
-import 'package:wings/core/main_widget.dart';
 import 'package:wings/presentation/dashboard/dashboard_page.dart';
 
 class PinGetx extends GetxController {
@@ -57,23 +56,7 @@ class PinGetx extends GetxController {
       create.value = '';
       value.value = '';
       message.value = 'Buat PIN Baru';
-      f.onShowDialog(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            w.gap(height: 16),
-            w.text(data: 'PIN tidak sama! ulangi buat PIN baru'),
-            w.gap(height: 5),
-            w.button(
-              onPressed: Get.back,
-              backgroundColor: Colors.white,
-              borderColor: Colors.black,
-              child: w.text(data: 'Mengerti'),
-            ),
-            w.gap(height: 16),
-          ],
-        ),
-      );
+      f.onShowWarn('PIN tidak sama! ulangi buat PIN baru');
     } else {
       create.value = value.value;
       value.value = '';
@@ -86,26 +69,12 @@ class PinGetx extends GetxController {
     String realValue = await f.secureRead(key: MainConfig.stringPIN);
     f.onEndLoading();
 
+    print('${value.value} == ${realValue}');
+
     if (value.value == realValue) return Get.offAll(() => DashboardPage());
     value.value = '';
 
-    f.onShowDialog(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          w.gap(height: 16),
-          w.text(data: 'PIN salah'),
-          w.gap(height: 5),
-          w.button(
-            onPressed: Get.back,
-            backgroundColor: Colors.white,
-            borderColor: Colors.black,
-            child: w.text(data: 'Mengerti'),
-          ),
-          w.gap(height: 16),
-        ],
-      ),
-    );
+    f.onShowWarn('PIN salah');
   }
 
   void onConfirm() async {
@@ -116,22 +85,6 @@ class PinGetx extends GetxController {
     if (value.value == realValue) return Get.back(result: true);
     value.value = '';
 
-    f.onShowDialog(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          w.gap(height: 16),
-          w.text(data: 'PIN salah'),
-          w.gap(height: 5),
-          w.button(
-            onPressed: Get.back,
-            backgroundColor: Colors.white,
-            borderColor: Colors.black,
-            child: w.text(data: 'Mengerti'),
-          ),
-          w.gap(height: 16),
-        ],
-      ),
-    );
+    f.onShowWarn('PIN salah');
   }
 }

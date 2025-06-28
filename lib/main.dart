@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:wings/core/main_email.dart';
 import 'package:wings/firebase_options.dart';
 import 'package:wings/core/main_config.dart';
 import 'package:wings/core/main_function.dart';
@@ -17,6 +18,7 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await GetStorage.init();
   await initInjection();
+  FuncE.onInit();
 
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
