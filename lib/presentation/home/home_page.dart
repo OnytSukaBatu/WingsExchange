@@ -188,7 +188,7 @@ class HomePage extends StatelessWidget {
                 child: Row(
                   children: [
                     SizedBox(
-                      width: 32,
+                      width: 24,
                       child: ClipOval(child: CachedNetworkImage(imageUrl: aset.image)),
                     ),
                     w.gap(width: 8),

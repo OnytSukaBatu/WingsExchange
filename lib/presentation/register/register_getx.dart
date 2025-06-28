@@ -33,11 +33,12 @@ class RegisterGetx extends GetxController {
 
   void onShowSNK() {
     f.onShowBottomSheet(
+      height: Get.height * 0.9,
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            w.text(data: snkValue.value),
+            w.text(data: snkValue.value, textAlign: TextAlign.left),
             w.gap(height: 16),
             SizedBox(
               width: double.infinity,
@@ -46,9 +47,9 @@ class RegisterGetx extends GetxController {
                   Get.back();
                   snk.value = true;
                 },
-                backgroundColor: Colors.white,
+                backgroundColor: Colors.black,
                 borderColor: Colors.black,
-                child: w.text(data: 'Saya menyetujui Syarat dan Ketentuan yang berlaku', fontSize: 12),
+                child: w.text(data: 'Saya menyetujui Syarat dan Ketentuan yang berlaku', fontSize: 12, color: Colors.white, fontWeight: FontWeight.bold),
               ),
             ),
           ],

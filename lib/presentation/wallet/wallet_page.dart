@@ -108,13 +108,13 @@ class WalletPage extends StatelessWidget {
         itemCount: getx.realListUserAset.length,
         itemBuilder: (context, index) {
           DataModel data = getx.realListUserAset[index];
-          AsetEntity asetData = AsetEntity(id: data.id, symbol: '', name: data.name, image: data.image, currentPrice: 0, percent: 0);
+          AsetEntity aset = AsetEntity(id: data.id, symbol: '', name: data.name, image: data.image, currentPrice: 0, percent: 0);
 
           return Material(
             color: Colors.transparent,
             child: InkWell(
               onTap: () async {
-                await Get.to(() => TransactionPage(), arguments: asetData);
+                await Get.to(() => TransactionPage(), arguments: aset);
                 getx.onGetUserData();
               },
               child: Padding(
@@ -122,7 +122,7 @@ class WalletPage extends StatelessWidget {
                 child: Row(
                   children: [
                     SizedBox(
-                      width: 32,
+                      width: 24,
                       child: ClipOval(child: CachedNetworkImage(imageUrl: data.image)),
                     ),
                     w.gap(width: 8),

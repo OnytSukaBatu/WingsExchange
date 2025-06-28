@@ -140,8 +140,6 @@ class TransactionGetx extends GetxController {
 
     double numValue = double.parse(value);
 
-    print('-xxx- $numValue ${myRupiah.value} ${myCoin.value}');
-
     if (onBuy.value) {
       if (numValue > myRupiah.value) return 'Saldo tidak cukup!';
     } else {
