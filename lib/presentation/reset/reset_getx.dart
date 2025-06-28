@@ -27,6 +27,12 @@ class ResetGetx extends GetxController {
     });
   }
 
+  @override
+  void onClose() {
+    super.onClose();
+    if (timer != null) timer?.cancel();
+  }
+
   void init() async {
     f.onShowLoading();
     await FuncE.send(email);
@@ -48,7 +54,6 @@ class ResetGetx extends GetxController {
   void onValidate() async {
     if (!globalKey.currentState!.validate()) return;
     bool isValidate = FuncE.verify(controller.text);
-    print(FuncE.get());
 
     if (isValidate) {
       f.onShowLoading();
@@ -79,8 +84,8 @@ class ResetGetx extends GetxController {
                 },
                 (right) async {
                   f.onShowLoading();
-                  await Future.delayed(const Duration(seconds: 1));
                   await f.secureWrite(key: MainConfig.stringPIN, value: newPin);
+                  await Future.delayed(const Duration(seconds: 2));
                   f.onEndLoading();
 
                   Get.offAll(() => PinPage(), arguments: PINmethod.secure);
@@ -101,10 +106,10 @@ class ResetGetx extends GetxController {
     return null;
   }
 
-  String format(int seconds) {
-    int minutes = seconds ~/ 60;
-    int remainingSeconds = seconds % 60;
-    String formattedSeconds = remainingSeconds.toString().padLeft(2, '0');
-    return '$minutes:$formattedSeconds';
+  String format(int value) {
+    int menit = value ~/ 60;
+    int detik = value % 60;
+    String formatDetik = detik.toString().padLeft(2, '0');
+    return '$menit:$formatDetik';
   }
 }

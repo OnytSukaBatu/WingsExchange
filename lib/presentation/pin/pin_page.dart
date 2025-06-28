@@ -59,7 +59,10 @@ class PinPage extends StatelessWidget {
                           onTap: () {
                             Get.offAll(() => ResetPage());
                           },
-                          child: w.text(data: 'Lupa PIN?', color: Colors.blue, fontWeight: FontWeight.bold, fontSize: 12),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                            child: w.text(data: 'Lupa PIN?', color: Colors.blue, fontWeight: FontWeight.bold, fontSize: 12),
+                          ),
                         ),
                       ),
                     ],

@@ -21,7 +21,10 @@ class ResetPage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                w.text(data: 'Masukan OTP yang dikirim ke ${getx.email}, OTP bersifat 1 kali penggunaan'),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: w.text(data: 'Masukan OTP yang dikirim ke ${getx.email}, OTP bersifat 1 kali penggunaan'),
+                ),
                 w.gap(height: 16),
                 w.field(
                   controller: getx.controller,
@@ -38,7 +41,10 @@ class ResetPage extends StatelessWidget {
                     visible: getx.remainingTime.value <= 0,
                     child: InkWell(
                       onTap: getx.init,
-                      child: w.text(data: 'Kirim ulang OTP', fontSize: 12, color: Colors.blue),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                        child: w.text(data: 'Kirim ulang OTP', fontSize: 12, color: Colors.blue),
+                      ),
                     ),
                   ),
                 ),

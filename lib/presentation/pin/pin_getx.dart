@@ -69,8 +69,6 @@ class PinGetx extends GetxController {
     String realValue = await f.secureRead(key: MainConfig.stringPIN);
     f.onEndLoading();
 
-    print('${value.value} == ${realValue}');
-
     if (value.value == realValue) return Get.offAll(() => DashboardPage());
     value.value = '';
 
