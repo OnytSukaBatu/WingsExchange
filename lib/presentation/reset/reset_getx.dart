@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wings/core/main_config.dart';
-import 'package:wings/core/main_email.dart';
 import 'package:wings/core/main_function.dart';
 import 'package:wings/domain/usecases/firebase_usecase.dart';
 import 'package:wings/injection_container.dart';
@@ -35,7 +34,7 @@ class ResetGetx extends GetxController {
 
   void init() async {
     f.onShowLoading();
-    await FuncE.send(email);
+    await f.sendOTP(email);
     f.onEndLoading();
 
     if (timer != null) timer?.cancel();
@@ -53,7 +52,7 @@ class ResetGetx extends GetxController {
 
   void onValidate() async {
     if (!globalKey.currentState!.validate()) return;
-    bool isValidate = FuncE.verify(controller.text);
+    bool isValidate = f.verifyOTP(controller.text);
 
     if (isValidate) {
       f.onShowLoading();

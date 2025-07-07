@@ -1,7 +1,7 @@
 import 'package:email_otp/email_otp.dart';
 
-class FuncE {
-  static void onInit() {
+mixin FuncEmail {
+  void onEmailInit() {
     EmailOTP.config(appName: 'Wings', otpType: OTPType.numeric, expiry: 18000, emailTheme: EmailTheme.v1, appEmail: 'valentynoelsan@gmail.com', otpLength: 6);
 
     EmailOTP.setTemplate(
@@ -18,15 +18,11 @@ class FuncE {
     );
   }
 
-  static Future<bool> send(String email) async {
+  Future<bool> sendOTP(String email) async {
     return await EmailOTP.sendOTP(email: email);
   }
 
-  static bool verify(String otp) {
+  bool verifyOTP(String otp) {
     return EmailOTP.verifyOTP(otp: otp);
-  }
-
-  static String get() {
-    return EmailOTP.getOTP() ?? 'null';
   }
 }

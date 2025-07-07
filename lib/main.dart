@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:wings/core/main_email.dart';
 import 'package:wings/firebase_options.dart';
 import 'package:wings/core/main_config.dart';
 import 'package:wings/core/main_function.dart';
@@ -18,7 +17,7 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await GetStorage.init();
   await initInjection();
-  FuncE.onInit();
+  f.onEmailInit();
 
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -37,7 +36,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(home: GenesisPage(), debugShowCheckedModeBanner: false);
+    return GetMaterialApp(
+      home: GenesisPage(),
+      debugShowCheckedModeBanner: false,
+      // theme: f.lightTheme,
+      // darkTheme: f.darkTheme,
+      // themeMode: ThemeMode.light,
+    );
   }
 }
 
@@ -78,6 +83,7 @@ class GenesisGetx extends GetxController {
   }
 
   void doInit(Duration _) async {
+    // await f.onThemeInit(Get.context!);
     bool alreadyLogin = f.boxRead(key: MainConfig.boolLogin, dv: false);
     if (!alreadyLogin) return Get.offAll(() => AuthPage());
     Get.offAll(() => PinPage(), arguments: PINmethod.secure);

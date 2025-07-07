@@ -4,6 +4,7 @@ class MainConfig {
   static String stringDisplay = 'MobileCacheDisplay';
   static String stringApiKey = 'MobileCacheApiKey';
   static String boolLogin = 'MobileCacheLogin';
+  static String boolTheme = 'MobileCacheTheme';
 
   static String urlListMarket = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=idr';
   static String urlAsetPrice = 'https://api.coingecko.com/api/v3/simple/price?vs_currencies=idr&ids=';

@@ -3,9 +3,11 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
+import 'package:wings/core/main_email.dart';
+import 'package:wings/core/main_theme.dart';
 import 'package:wings/core/main_widget.dart';
 
-class MainFunction with FuncGetStorage, FuncSecureStorage {
+class MainFunction with FuncGetStorage, FuncSecureStorage, FuncEmail, MainTheme {
   Future onShowBottomSheet({
     required Widget child,
     EdgeInsetsGeometry? padding,
